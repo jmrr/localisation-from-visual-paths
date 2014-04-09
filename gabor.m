@@ -3,19 +3,22 @@ function gb = gabor(sigma,orient,lambda,phase,aspect)
 % This function produces a numerical approximation to 2D Gabor function.
 % Parameters:
 % sigma  = standard deviation (width) of the Gaussian envelope, this
-%          in-turn controls the size of the result (pixels).
+%          in-turn controls the size of the result (pixels). Size of the
+%          output Gabor filter will be (4*sigma+1)x(4*sigma+1).
 % aspect = aspect ratio of Gaussian envelope (0 = no modulation over "width" of
 %          sin wave, 1 = circular symmetric envelope). aspect can also be
 %          seen as the amount the kernel is "stretched" either along or
-%          across the kernel wave pattern.
+%          across the kernel wave pattern, or ellipticity of the support.
 % orient = orientation of the Gabor from the vertical (degrees): the
 %          directaion of the carrier since x_theta and y_theta are rotated
 %          by theta.
-% lambda = the wavelength of the carrier.
-% phase  = the phase of the sin wave (degrees)
+% lambda = the wavelength of the carrier (pixels).
+% phase  = the phase ofset of the carrier(degrees)
+%
+% Old parameters:
 % beta   =  octaves, bandwidth of gabor (0.62 0.8 1 1.2 1.5)
-% sigma=wavel*((2^beta+1)/(2^beta-1))*sqrt(log(2)/2)/pi;
-% sigma=wavel*((2^beta+1)/(2^beta-1))/(2*pi);
+% sigma = wavel*((2^beta+1)/(2^beta-1))*sqrt(log(2)/2)/pi;
+% sigma = wavel*((2^beta+1)/(2^beta-1))/(2*pi);
 %
 %
 % Created by Ioannis Alexiou (2012-2013)
@@ -37,7 +40,7 @@ end
 
 %Create the support grid.
 
-[x,y]=meshgrid(-fix(sz/2):fix(sz/2),-fix(sz/2):fix(sz/2));
+[x,y] = meshgrid(-fix(sz/2):fix(sz/2),-fix(sz/2):fix(sz/2));
  
 % Rotation of the carrier
 

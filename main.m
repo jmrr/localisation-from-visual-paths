@@ -17,7 +17,7 @@ FRAME_FOLDER = 'frames_resized_w208p';
 
 DESCRIPTOR_DESTINATION_FOLDER = './descriptors';
 
-DESCRIPTOR = 'SIFT';
+DESCRIPTOR = 'ST_GABOR';
 
 PATHSEP = '/';
 
@@ -56,6 +56,17 @@ for corr = CORRIDORS
 
                     DSIFT(frames_folder,descriptor_fname,writepath);
                 case 'ST_GABOR' % Case of spatio-temporal Gabors
+                    writepath = fullfile(DESCRIPTOR_DESTINATION_FOLDER,...
+                        ['C' num2str(corr)],DESCRIPTOR,filesep);
+                    % Create descriptor writepath if it doesn't exist
+                    mkdir(writepath);
+                    descriptor_fname = sprintf(descriptor_fname_str,corr,p);
+                    
+                    % Generate the gradients
+                    ST_GABOR_Gradients(frames_folder,descriptor_fname,writepath);
+                   
+                    % Construct the descriptor
+                    ST_GABOR(descriptor_fname,writepath)
             end
         %waitbar(j/PASSES(end));
     end

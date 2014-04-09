@@ -8,7 +8,7 @@ function DSIFT(path,fname,writepath)
 files = dir([path '*.jpg']);
 
 % num Frames
-numFrames = length(files); %get(obj, 'NumberOfFrames');
+numFrames = length(files); 
 
 single_frame = imread([path files(1).name]);
 

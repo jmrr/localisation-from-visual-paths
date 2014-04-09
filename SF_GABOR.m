@@ -10,10 +10,6 @@ numFrames = length(files);
 
 LMs = gpuArray(PoolingMappings);
 
-% Retrieve the first frame and information about the video seq from it
-
-I = single(rgb2gray(imread([path files(1).name])));
-
 % num_pixels = numel(I);
 
 % Preallocate memory for data structures: grid and descriptor stacks.
@@ -39,16 +35,17 @@ for n = 1:numFrames
     % To obtain the scale space
     
     for L = 1:4
-        scale_space(:,:,L)=max(Raw(:,:,L),0); 
-        scale_space(:,:,L+4)=-min(Raw(:,:,L),0); 
+        scale_space(:,:,L) = max(Raw(:,:,L),0); 
+        scale_space(:,:,L+4) = -min(Raw(:,:,L),0); 
     end
     
     % Create the sampling grids
-    Fake = zeros(size(I,1),size(I,2));
-    [Grid,Y,X,LinSize] = MakeGrids(Fake,3);
+    step = 3;
+    emptyImg = zeros(size(I,1),size(I,2));
+    [Grid,Y,X,LinSize] = MakeGrids(emptyImg,step);
 
     
-    DenseMag = PoolingLayer(Fake,gpuArray(scale_space),LMs,LinSize,Y,X);
+    DenseMag = PoolingLayer(emptyImg,gpuArray(scale_space),LMs,LinSize,Y,X);
 
     DenseMag = single( DenseMag ./ repmat(sqrt(sum(DenseMag.^2,2))+eps,[1,size(DenseMag,2)]) );
 
@@ -67,7 +64,7 @@ function [GridLin,Y,X,LinSize] = MakeGrids(I,step)
     Y = Grid{1}(:,1);
     X = Grid{2}(1,:);
 
-    GridLin=[Grid{1}(:),Grid{2}(:)];
+    GridLin = [Grid{1}(:),Grid{2}(:)];
 
     LinSize = size(Grid{1},1)*size(Grid{1},2);
     
@@ -112,10 +109,10 @@ function LMs = PoolingMappings
     alpha = 4;  %1/alpha = 5.8 2.8 0.3 %0.25 *mlt
     beta = 0.4;  %1/beta = 2.5 1.1 1.2 0.18*mlt
 
-    exteded_diameter = diameter*20;    % 20 times the diameter is enough area to
+    extended_diameter = diameter*20;    % 20 times the diameter is enough area to
                                        % build the subspaces
 
-    Map = attentional_subspaces(exteded_diameter,rho,alpha_center,alpha,beta);
+    Map = attentional_subspaces(extended_diameter,rho,alpha_center,alpha,beta);
 
     M = imresize(Map(:,:,8:end),[diameter diameter],'bilinear');
 
@@ -129,7 +126,7 @@ function LMs = PoolingMappings
     
 end % end PoolingMappings
 
-function [Grid,BorderOffsets]=RegularGrid(Input,step,BorderOffsets)
+function [Grid,BorderOffsets] = RegularGrid(Input,step,BorderOffsets)
 
     [y,x] = size(Input);
     dy = 1:step:y;
@@ -145,5 +142,5 @@ function [Grid,BorderOffsets]=RegularGrid(Input,step,BorderOffsets)
         Grid(2,bo) = {repmat(dx(indx),length(dy(indy)),1)};
     end
 
-end
+end % end RegularGrid
  
