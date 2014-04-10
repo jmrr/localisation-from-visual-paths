@@ -15,7 +15,7 @@ subspaces = zeros(rows,cols,24); % Initially, we will have 24 spaces
 
 radius = sqrt( (2*(x+0.5)/cols).^2 + (2*(y+0.5)/rows).^2 ); % r = sqrt(x^2+y^2)
 
-i=9;
+i = 9;
 
 radius=1.4143-radius;
 

@@ -16,7 +16,7 @@ MemSize = Height * Width * numFrames * 4/1e9; % memory in GB
 
 disp([num2str(MemSize) 'GB RAM Memory Occupancy'])
 
-%% Anty-simmetric complex Gabor filters: spatial and temporal
+%% Anti-simmetric complex Gabor filters: spatial and temporal
 % gabor(sigma,orient,lambda,phase,aspect)
 
 spatialFilter = imag(gabor(1,0,4,0,1)); % Take the imaginary part of the Gabor 
@@ -77,7 +77,7 @@ for i = 1:numFrames
 
 end
 
-save([writepath fname '_gradients'],'channelStack','-v7.3')
+save([writepath fname],'channelStack','-v7.3')
 
 
 function Channels = azimuthAngleQuantizer(Mag,AngleEst,numAnglesXY)

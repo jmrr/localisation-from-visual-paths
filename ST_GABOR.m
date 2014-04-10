@@ -1,8 +1,13 @@
-function ST_GABOR(fname,writepath)
+function ST_GABOR(gradients_fname,descriptor_fname,writepath)
+% ST_GABOR 
+%
+% Author: Ioannis Alexiou, 2013.
+% Modified by Jose Rivera, April 2014.  
+%   
 
 % Load channelStack
 
-filename = [writepath fname];
+filename = [writepath gradients_fname];
 load([filename,'.mat']);
 
 Height = size(channelStack,1);
@@ -51,7 +56,7 @@ GridStack(:,:,n) = Grid;
 
 end
 
-save([writepath  fname '_Descriptors'],'DescriptorStack','GridStack','-v7.3')
+save([writepath  descriptor_fname '_Descriptors'],'DescriptorStack','GridStack','-v7.3')
 
 end % ST_GABOR
 

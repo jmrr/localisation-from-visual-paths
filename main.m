@@ -17,7 +17,7 @@ FRAME_FOLDER = 'frames_resized_w208p';
 
 DESCRIPTOR_DESTINATION_FOLDER = './descriptors';
 
-DESCRIPTOR = 'ST_GABOR';
+DESCRIPTOR = 'SIFT'; % LWCOLOR, SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
 
 PATHSEP = '/';
 
@@ -43,11 +43,23 @@ for corr = CORRIDORS
 
                     writepath = fullfile(DESCRIPTOR_DESTINATION_FOLDER,...
                         ['C' num2str(corr)],DESCRIPTOR,filesep);
-   
+                    % Create descriptor writepath if it doesn't exist
+                    mkdir(writepath);
+                    
                     descriptor_fname = sprintf(descriptor_fname_str,corr,p);
                     
                     SF_GABOR(frames_folder,descriptor_fname,writepath);
-                case 'SIFT' % case of Dense-SIFT
+                    
+                case 'SIFT' % case of Sparse-SIFT based on keypoint detection
+                    writepath = fullfile(DESCRIPTOR_DESTINATION_FOLDER,...
+                        ['C' num2str(corr)],DESCRIPTOR,filesep);
+                    % Create descriptor writepath if it doesn't exist
+                    mkdir(writepath);
+                    descriptor_fname = sprintf(descriptor_fname_str,corr,p);
+
+                    SIFT(frames_folder,descriptor_fname,writepath);
+                    
+                case 'DSIFT' % case of Dense-SIFT
                     writepath = fullfile(DESCRIPTOR_DESTINATION_FOLDER,...
                         ['C' num2str(corr)],DESCRIPTOR,filesep);
                     % Create descriptor writepath if it doesn't exist
@@ -55,18 +67,31 @@ for corr = CORRIDORS
                     descriptor_fname = sprintf(descriptor_fname_str,corr,p);
 
                     DSIFT(frames_folder,descriptor_fname,writepath);
+                    
                 case 'ST_GABOR' % Case of spatio-temporal Gabors
                     writepath = fullfile(DESCRIPTOR_DESTINATION_FOLDER,...
                         ['C' num2str(corr)],DESCRIPTOR,filesep);
                     % Create descriptor writepath if it doesn't exist
                     mkdir(writepath);
                     descriptor_fname = sprintf(descriptor_fname_str,corr,p);
-                    
+                    gradients_fname = [descriptor_fname '_gradients'];
                     % Generate the gradients
-                    ST_GABOR_Gradients(frames_folder,descriptor_fname,writepath);
+                    ST_GABOR_Gradients(frames_folder,gradients_fname,writepath);
                    
                     % Construct the descriptor
-                    ST_GABOR(descriptor_fname,writepath)
+                    ST_GABOR(gradients_fname,descriptor_fname,writepath);
+                case 'ST_GAUSS' % Case of spatio-temporal Gaussians
+                    writepath = fullfile(DESCRIPTOR_DESTINATION_FOLDER,...
+                        ['C' num2str(corr)],DESCRIPTOR,filesep);
+                    % Create descriptor writepath if it doesn't exist
+                    mkdir(writepath);
+                    descriptor_fname = sprintf(descriptor_fname_str,corr,p);
+                    gradients_fname = [descriptor_fname '_gradients'];
+                    % Generate the gradients
+                    ST_GAUSS_Gradients(frames_folder,gradients_fname,writepath);
+                   
+                    % Construct the descriptor
+                    ST_GAUSS(gradients_fname,descriptor_fname,writepath);
             end
         %waitbar(j/PASSES(end));
     end
