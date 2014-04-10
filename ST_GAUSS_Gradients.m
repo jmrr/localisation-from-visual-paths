@@ -59,7 +59,7 @@ channelStack = zeros(Height,Width,numFrames,numChannels,'single');
 
 MemSize = Height*Width*numAnglesXY*numFrames*4/1e9;
 
-disp([num2str(MemSize) 'GB RAM Memory Occupancy of BigChunk'])
+disp([num2str(MemSize) 'GB RAM Memory Occupancy of channelStack'])
 
 for i = 1:numFrames
 

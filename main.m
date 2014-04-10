@@ -11,7 +11,7 @@ DATASET_DIR = '/media/bg-PictureThis/VISUAL_PATHS/v5.0';
 
 CORRIDORS = 1:6;
 
-PASSES = 1:5;
+PASSES = 1:10;
 
 FRAME_FOLDER = 'frames_resized_w208p';
 
@@ -34,7 +34,7 @@ for corr = CORRIDORS
         frames_folder = fullfile(working_path,FRAME_FOLDER,filesep);
         
         writepath = fullfile(DESCRIPTOR_DESTINATION_FOLDER,...
-                        ['C' num2str(corr)],DESCRIPTOR,filesep);
+                        DESCRIPTOR,['C' num2str(corr)],['P' num2str(p)],filesep);
         % Create descriptor writepath if it doesn't exist
         mkdir(writepath);
 
