@@ -1,9 +1,9 @@
 % MAIN is a script that  selects the descriptors that are going to be
 % computed on the visual paths datasets.
 %
-% Authors: Ioannis Alexiou and Jose Rivera-Rubio
-%          {ia2109,jose.rivera}@imperial.ac.uk
-% Date: November, 2013
+% Authors: Jose Rivera-Rubio and Ioannis Alexiou 
+%          {jose.rivera,ia2109}@imperial.ac.uk
+% Date: April, 2013
 
 % CONSTANT GLOBAL variables
 
@@ -17,13 +17,12 @@ FRAME_FOLDER = 'frames_resized_w208p';
 
 DESCRIPTOR_DESTINATION_FOLDER = './descriptors';
 
-DESCRIPTOR = 'ST_GAUSS'; % LWCOLOR, SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
-
-PATHSEP = '/';
+DESCRIPTOR = 'ST_GABOR'; % LW_COLOR, SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
 
 % Other global variables
 descriptor_fname_str = 'C%dP%d';
-% Main loop
+
+% MAIN LOOP
 
 for corr = CORRIDORS
     corridor = ['C' num2str(corr)];
@@ -62,18 +61,18 @@ for corr = CORRIDORS
 
                     gradients_fname = [descriptor_fname '_gradients'];
                     % Generate the gradients
-                    ST_GABOR_Gradients(frames_folder,gradients_fname,writepath);
+                    [descProps] = ST_GABOR(frames_folder,gradients_fname,writepath);
                    
                     % Construct the descriptor
-                    ST_GABOR(gradients_fname,descriptor_fname,writepath);
+                    ST_descriptor_construction(gradients_fname,descriptor_fname,writepath,descProps);
                 case 'ST_GAUSS' % Case of spatio-temporal Gaussians
 
                     gradients_fname = [descriptor_fname '_gradients'];
                     % Generate the gradients
-                    ST_GAUSS_Gradients(frames_folder,gradients_fname,writepath);
+                    [descProps] = ST_GAUSS(frames_folder,gradients_fname,writepath);
                    
                     % Construct the descriptor
-                    ST_GAUSS(gradients_fname,descriptor_fname,writepath);
+                    ST_descriptor_construction(gradients_fname,descriptor_fname,writepath,descProps);
             end
         %waitbar(j/PASSES(end));
     end

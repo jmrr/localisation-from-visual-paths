@@ -1,146 +1,108 @@
-function ST_GAUSS(gradients_fname,descriptor_fname,writepath)
-% ST_GABOR 
-%
-% Author: Ioannis Alexiou, 2013.
-% Modified by Jose Rivera, April 2014.  
-%   
+function [descProps] = ST_GAUSS(seqPath,fname,writepath)
 
-% Load channelStack
+% List files
 
-filename = [writepath gradients_fname];
-load([filename,'.mat']);
+files = dir([seqPath '*.jpg']); 
 
-Height = size(channelStack,1);
-Width = size(channelStack,2);
-numFrames = size(channelStack,3);
-numChannels = size(channelStack,4);
+% Count number of frames
+numFrames = length(files); 
 
+single_frame = imread([seqPath files(1).name]);
 
-temporalGaussianFilter = fspecial('gaussian',[11 1],2);
+Height = size(single_frame, 1);
+Width = size(single_frame, 2);
 
-for i = 1:numChannels
+MemSize = Height * Width * numFrames * 4/1e9; % memory in GB
 
-    shiftedChannelStack = shiftdim(channelStack(:,:,:,i),2);
-    filteredChannelStack = shiftdim(imfilter(shiftedChannelStack,temporalGaussianFilter','conv'),1);
-    channelStack(:,:,:,i) = filteredChannelStack;
+disp([num2str(MemSize) 'GB RAM Memory Occupancy'])
 
-end
+% Declare descriptor properties
+descProps = struct('Name',{},'Dimension',{},'SpatialSize',{},...
+    'TemporalSmoothingSize',{},'GaussianStd',{},'QuantizedOrientationsXY',{},...
+    'QuantizedElevations',{},'QuantizedOrientations',{});
 
-% Create pooling subspaces:
+%% Temporal Gaussian, spatial derivative
 
-LMs = double(PoolingMappings);
+temporalFilter = fspecial('gauss',[11 1],2); % 11 point length, sigma = 2
 
-% num_pixels = numel(I);
+spatialFilter = imag(gabor(1,0,4,0,1)); % Take the imaginary part of the Gabor 
 
-% Preallocate memory for data structures: grid and descriptor stacks.
+% Storing the image sequence in memory (valid at low resolutions).
 
-GridStack = [];
-DescriptorStack = [];
+sequence = zeros(Height,Width,numFrames,'single');
 
-emptyImg = zeros(Height,Width);
+for i = 1:numFrames
 
-% Run for all the frames in the video sequence
+    I = single(rgb2gray(imread([seqPath files(i).name])));
 
-for n = 1:numFrames
-
-[Grid,Y,X,LinSize] = MakeGrids(emptyImg,3);
-
-DenseMag = PoolingLayer(emptyImg,channelStack(:,:,n,:),LMs,LinSize,Y,X);
-
-DenseMag = single( DenseMag ./ repmat(sqrt(sum(DenseMag.^2,2))+eps,[1,size(DenseMag,2)]) );
-
-DescriptorStack(:,:,n) = DenseMag;
-GridStack(:,:,n) = Grid; 
+    sequence(:,:,i) = I; 
 
 end
 
-save([writepath  descriptor_fname '_Descriptors'],'DescriptorStack','GridStack','-v7.3')
+% Filtering the frames:
 
-end % ST_GABOR
+% First temporal smoothing
+filteredSeqZ = shiftdim(imfilter(shiftdim(sequence,2),temporalFilter','conv'),1);
 
-function [GridLin,Y,X,LinSize]=MakeGrids(I,step)
+% Then apply the spatial derivative masks on the filtered sequence
+filteredSeqX = imfilter(filteredSeqZ,spatialFilter,'conv');
+filteredSeqY = imfilter(filteredSeqZ,spatialFilter','conv');
 
-Grid = RegularGrid(zeros(size(I)),step,9); % step=3
+% Constructing the feature vector:
 
-Y = Grid{1}(:,1);
-X = Grid{2}(1,:);
+Mag = sqrt(filteredSeqX.^2+filteredSeqY.^2);
 
-GridLin=[Grid{1}(:),Grid{2}(:)];
+azimuthAngle = atan2(filteredSeqY,filteredSeqX);
 
-LinSize = size(Grid{1},1)*size(Grid{1},2);
+% 8 spatial orientations
 
-end % end Make Grids
+numAnglesXY = 8;
 
-function DM = PoolingLayer(I,scale_space,LMap,LinSize,Y,X)
+numChannels = numAnglesXY; % This time there is no elevation angles
 
-    NumAttr = 17;
-    NumGrads = 8;
+channelStack = zeros(Height,Width,numFrames,numChannels,'single');
 
-    DenseMag = zeros(size(I,1),size(I,2),NumAttr*NumGrads,'single');
+MemSize = Height*Width*numAnglesXY*numFrames*4/1e9;
 
-    for attr = 1:NumAttr
+disp([num2str(MemSize) 'GB RAM Memory Occupancy of channelStack'])
 
-        % Obtain the dense descriptors (1 descriptor per pixel) as the
-        % outputs of a dot product at the sampling locations (equivalent
-        % to 2D convolution over the whole image in one operation.
+for i = 1:numFrames
 
-        DenseMag(:,:,(attr-1)*NumGrads+(1:NumGrads)) = ... 
-        imfilter(scale_space,LMap(:,:,attr),'symmetric','conv') ;
+    quantizedAngles = azimuthAngleQuantizer(Mag(:,:,i),azimuthAngle(:,:,i),numAnglesXY);
+
+    
+    channelStack(:,:,i,:) = cat(3,quantizedAngles);
+
+end
+
+% Complete descProps and save
+
+descProps(1).Name = 'ST_GAUSS: Temporal Gaussian, spatial derivative';
+descProps(1).SpatialSize = size(spatialFilter);
+descProps(1).TemporalSmoothingSize = size(temporalFilter);
+descProps(1).GaussianStd = 2;
+descProps(1).QuantizedOrientationsXY = numAnglesXY;
+descProps(1).QuantizedElevations = 0;
+descProps(1).QuantizedOrientations = numAnglesXY+descProps(1).QuantizedElevations;
+
+save([writepath fname],'channelStack','-v7.3')
+
+
+function Channels = azimuthAngleQuantizer(Mag,AngleEst,numAnglesXY)
+
+ angstep = 2*pi/numAnglesXY;
+
+ angles=0:angstep:2*pi-angstep;
+
+    for a=1:length(angles)
+    %     compute each orientation channel
+        tmp = cos(AngleEst - angles(a)).^9;
+        tmp = tmp .* (tmp > 0);
+
+    %     weight by magnitude
+       Channels(:,:,a) = tmp .* Mag;
 
     end
 
-    % Sub-sample according to the dense grid.
-    DM = DenseMag;
 
-    % Reshape to fit the structure Npoints_grid x Dimension_descriptor
-    DM = reshape(DM(Y,X,:),LinSize,NumAttr*NumGrads);
     
-end % end Pooling Layer
-
-function LMs = PoolingMappings
-
-    diameter = 11;
-    % M=SiftMaps(Diameter);
-    % PS = Diameter*Diameter;
-
-    % Parameters
-    alpha_center = 20; %1/alpha_center = 0.05, 0.02 0.03 *mlt
-    % rho=[0 0.3 0.4]; VOC % 0.35 0.85 initially 0 0.3 0.7 r1 r2
-    rho = [0 0.45 0.6]; % Caltech
-    alpha = 4;  %1/alpha = 5.8 2.8 0.3 %0.25 *mlt
-    beta = 0.4;  %1/beta = 2.5 1.1 1.2 0.18*mlt
-
-    extended_diameter = diameter*20;    % 20 times the diameter is enough area to
-                                       % build the subspaces
-
-    Map = attentional_subspaces(extended_diameter,rho,alpha_center,alpha,beta);
-
-    M = imresize(Map(:,:,8:end),[diameter diameter],'bilinear');
-
-    % Normalisation
-
-    LinMaps = single(M);
-
-    LinMaps = LinMaps ./ repmat(sum(sum(LinMaps)),[diameter,diameter,1]);
-
-    LMs = LinMaps;
-    
-end % end PoolingMappings
-
-function [Grid,BorderOffsets] = RegularGrid(Input,step,BorderOffsets)
-
-    [y,x] = size(Input);
-    dy = 1:step:y;
-    dx = 1:step:x;
-    % BorderOffsets=17;%round(10*2.^(1:0.25:3.25));
-    Grid = cell(2,length(BorderOffsets));
-    
-    for bo = 1:length(BorderOffsets)
-
-        indy = dy > BorderOffsets(bo) & dy < (y-BorderOffsets(bo));
-        indx = dx > BorderOffsets(bo) & dx < (x-BorderOffsets(bo));
-        Grid(1,bo) = {repmat(dy(indy)',1,length(dx(indx)))};
-        Grid(2,bo) = {repmat(dx(indx),length(dy(indy)),1)};
-    end
-
-end % end RegularGrid
