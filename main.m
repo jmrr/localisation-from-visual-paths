@@ -9,13 +9,9 @@
 
 DATASET_DIR = '/media/bg-PictureThis/VISUAL_PATHS/v5.0';
 
-CORRIDORS = 2;
+CORRIDORS = 1:10;
 
-<<<<<<< HEAD
 PASSES = 1:10;
-=======
-PASSES = 2;
->>>>>>> 0109b84412b19e8d289d8125864189fd1b16365c
 
 FRAME_FOLDER = 'frames_resized_w208p';
 
