@@ -18,8 +18,6 @@ numChannels = size(channelStack,4);
 
 temporalGaussianFilter = fspecial('gaussian',[11 1],2);
 
-
-
 for i = 1:numChannels
 
     shiftedChannelStack = shiftdim(channelStack(:,:,:,i),2);

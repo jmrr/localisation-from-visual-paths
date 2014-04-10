@@ -17,7 +17,7 @@ FRAME_FOLDER = 'frames_resized_w208p';
 
 DESCRIPTOR_DESTINATION_FOLDER = './descriptors';
 
-DESCRIPTOR = 'SIFT'; % LWCOLOR, SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
+DESCRIPTOR = 'LW_COLOR'; % LWCOLOR, SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
 
 PATHSEP = '/';
 
@@ -33,47 +33,33 @@ for corr = CORRIDORS
         working_path = fullfile(DATASET_DIR,corridor,'videos',num2str(p));
         frames_folder = fullfile(working_path,FRAME_FOLDER,filesep);
         
+        writepath = fullfile(DESCRIPTOR_DESTINATION_FOLDER,...
+                        ['C' num2str(corr)],DESCRIPTOR,filesep);
+        % Create descriptor writepath if it doesn't exist
+        mkdir(writepath);
+
+        descriptor_fname = sprintf(descriptor_fname_str,corr,p);
+        
             switch DESCRIPTOR
                 
                 case 'LW_COLOR' % Case of Lightweight color descriptors
-                    DescriptorBlocks = generateSignals(frames_folder);
-                    save([DESCRIPTOR_DESTINATION_FOLDER '/DB' corridor pass '.mat'],'DescriptorBlocks');
-        
-                case 'SF_GABOR' % Case of single-frame Gabor
 
-                    writepath = fullfile(DESCRIPTOR_DESTINATION_FOLDER,...
-                        ['C' num2str(corr)],DESCRIPTOR,filesep);
-                    % Create descriptor writepath if it doesn't exist
-                    mkdir(writepath);
-                    
-                    descriptor_fname = sprintf(descriptor_fname_str,corr,p);
+                    LW_COLOR(frames_folder,descriptor_fname,writepath);
+      
+                case 'SF_GABOR' % Case of single-frame Gabor
                     
                     SF_GABOR(frames_folder,descriptor_fname,writepath);
                     
                 case 'SIFT' % case of Sparse-SIFT based on keypoint detection
-                    writepath = fullfile(DESCRIPTOR_DESTINATION_FOLDER,...
-                        ['C' num2str(corr)],DESCRIPTOR,filesep);
-                    % Create descriptor writepath if it doesn't exist
-                    mkdir(writepath);
-                    descriptor_fname = sprintf(descriptor_fname_str,corr,p);
-
+      
                     SIFT(frames_folder,descriptor_fname,writepath);
                     
                 case 'DSIFT' % case of Dense-SIFT
-                    writepath = fullfile(DESCRIPTOR_DESTINATION_FOLDER,...
-                        ['C' num2str(corr)],DESCRIPTOR,filesep);
-                    % Create descriptor writepath if it doesn't exist
-                    mkdir(writepath);
-                    descriptor_fname = sprintf(descriptor_fname_str,corr,p);
 
                     DSIFT(frames_folder,descriptor_fname,writepath);
                     
                 case 'ST_GABOR' % Case of spatio-temporal Gabors
-                    writepath = fullfile(DESCRIPTOR_DESTINATION_FOLDER,...
-                        ['C' num2str(corr)],DESCRIPTOR,filesep);
-                    % Create descriptor writepath if it doesn't exist
-                    mkdir(writepath);
-                    descriptor_fname = sprintf(descriptor_fname_str,corr,p);
+
                     gradients_fname = [descriptor_fname '_gradients'];
                     % Generate the gradients
                     ST_GABOR_Gradients(frames_folder,gradients_fname,writepath);
@@ -81,11 +67,7 @@ for corr = CORRIDORS
                     % Construct the descriptor
                     ST_GABOR(gradients_fname,descriptor_fname,writepath);
                 case 'ST_GAUSS' % Case of spatio-temporal Gaussians
-                    writepath = fullfile(DESCRIPTOR_DESTINATION_FOLDER,...
-                        ['C' num2str(corr)],DESCRIPTOR,filesep);
-                    % Create descriptor writepath if it doesn't exist
-                    mkdir(writepath);
-                    descriptor_fname = sprintf(descriptor_fname_str,corr,p);
+
                     gradients_fname = [descriptor_fname '_gradients'];
                     % Generate the gradients
                     ST_GAUSS_Gradients(frames_folder,gradients_fname,writepath);
