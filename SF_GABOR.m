@@ -1,8 +1,21 @@
-function SF_GABOR(path,fname,writepath)
-
+function SF_GABOR(seqPath,descriptor_fname,writepath)
+%   SF_GABOR  constructs a single-frame descriptor based on 17 DAISY-like
+%   pooling arrangements applied over the result of 2D convolution
+%   between the frames and and antysymmetric, 2D Gabors.
+%
+%   Inputs:
+%       - seqPath: an existing path where the sequence images are stored
+%       - descriptor_fname: a string representing the descriptor filename to be
+%           used for the .mat descriptor data.
+%       - writepath: an existing path where the .mat data with the
+%           descriptors will be stored
+%   
+%    Authors: Jose Rivera and Ioannis Alexiou
+%          April, 2014
+%
 % Count number of frames
 
-files = dir([path '*.jpg']); 
+files = dir([seqPath '*.jpg']); 
 
 numFrames = length(files);
 
@@ -21,7 +34,7 @@ DescriptorStack = [];
 
 for n = 1:numFrames
 
-    I = single(rgb2gray(imread([path files(n).name])));
+    I = single(rgb2gray(imread([seqPath files(n).name])));
 
     Raw = zeros(size(I,1),size(I,2),4,'single');
     scale_space = zeros(size(I,1),size(I,2),8,'single');
@@ -54,7 +67,7 @@ for n = 1:numFrames
 
 end
 
-save([writepath  fname '_Descriptors'],'DescriptorStack','GridStack','-v7.3')
+save([writepath  descriptor_fname '_Descriptors'],'DescriptorStack','GridStack','-v7.3')
 end % end SF_GABOR
 
 function [GridLin,Y,X,LinSize] = MakeGrids(I,step)

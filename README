@@ -1,8 +1,8 @@
 This is a Matlab code to extract visual descriptors from video sequences.
-The code is prepared to be used with the RSM dataset (http://rsm.bicv.org)
+The code is ready to be used with the RSM dataset (http://rsm.bicv.org)
 but can be used on any sort of image sequences.
 
-Current descriptors supported (description below):
+Current implemented descriptor extraction methods (description below):
 LW_COLOR, SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS
 
 Current supported format of the sequences: JPG
@@ -26,7 +26,7 @@ Running Instructions:
 1. Run main.m selecting the following parameters before running the loop:
 
 DATASET_DIR: The root path of the RSM dataset
-CORRIDORS: Corridors to run [1:10]
+CORRIDORS: Corridors to run [1:6]
 PASSES: Passes to run [1:10]
 FRAME_FOLDER: Folder name where all the frames have been extracted.
 DESCRIPTOR_DESTINATION_FOLDER

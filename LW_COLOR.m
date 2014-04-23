@@ -1,12 +1,36 @@
-function LW_COLOR(folder,fname,writepath)
+function LW_COLOR(seqPath,desc_fname,writepath)
+%   LW_COLOR computes the frame level space-time descriptors. They are
+%   lightweight (LW) and make use of colour information (COLOR).
+%
+%   Inputs:
+%       - folder: an existing path where the sequence images are stored
+%       - desc_fname: a string representing the descriptor filename to be
+%           used for the .mat descriptor data.
+%       - writepath: an existing path where the .mat data with the
+%           descriptors will be stored
+%
+%   Description: Derivative filters are computed along the x,y and t
+%   dimensions on each of the 3 RGB channels. Temporal smoothing with a
+%   support of 11 neighbouring frames is applied. Finally, the components
+%   of the 3x3 matrix at each of the pixels locations is averaged (pooled) 
+%   over 16 spatial regions. The descriptor is thus 144-dimensional
+%   (3x3x16).
+%   
+%
+%
+% Authors: Anil A. Bharath and Jose Rivera
+%          {a.bharath,jose.rivera}@imperial.ac.uk
+% Date: April, 2013
+
+
 
 % Generate Signals from frame folder. 
 
 % frame information
-D = dir(folder);
+D = dir(seqPath);
 D = D(3:end); % discard ./ and ..
 numFrames = length(D);
-img = imread([folder '/' D(1).name]);
+img = imread([seqPath filesep D(1).name]);
 N = size(img,2); % Width
 M = size(img,1); % Height
 NK = 8; % Number of kernels
@@ -59,7 +83,7 @@ disp(['Number of Frames: ',num2str(numFrames)]);
 for block = 1:NBlocks-1
     x = [];
     for idx = (block-1)*blocksize+1:block*blocksize
-        x = cat(4,x,imread([folder '/' D(idx).name]));
+        x = cat(4,x,imread([seqPath '/' D(idx).name]));
     end
     disp(['Read Block #: ',num2str(block)]);
     DescriptorBlocks(:,:,block) = processblock(x,K);
@@ -71,7 +95,7 @@ DescriptorBlocks = reshape(DescriptorBlocks,[M,N*O]);
 % Process last block
 x = []; 
 for idx = (NBlocks-1)*blocksize+1:numFrames
-    x = cat(4,x,imread([folder '/' D(idx).name]));  
+    x = cat(4,x,imread([seqPath '/' D(idx).name]));  
 end
 disp(['Read Block #: ',num2str(NBlocks)]);
 DescriptorBlocks = cat(2,DescriptorBlocks,processblock(x,K));
@@ -82,7 +106,7 @@ DescriptorStack = reshape(DescriptorBlocks,[1 size(DescriptorBlocks)]);
 
 % and save results
 
-save([writepath  fname '_Descriptors'],'DescriptorStack','-v7.3')
+save([writepath  desc_fname '_Descriptors'],'DescriptorStack','-v7.3')
 
 function D = processblock(x,K);
 

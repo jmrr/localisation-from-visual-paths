@@ -1,8 +1,20 @@
 function ST_descriptor_construction(gradients_fname,descriptor_fname,writepath,descProps)
-% ST_DESCRIPTOR CONSTRUCTION
+% ST_DESCRIPTOR CONSTRUCTION constructs the space-time descriptors given a
+% gradient field previously obtained. A pattern of 17 lobes is applied over
+% a patch of 11x11 pixels in spatial extent. The spatial pooling patterns
+% are inspired in the DAISY descriptor (Tola, Lepetit and Fua, 2010).
 %
-% Author: Ioannis Alexiou, 2013.
-% Modified by Jose Rivera, April 2014.  
+%
+%   Inputs:
+%       - gradients_fname: an existing path where the gradients are stored
+%       - descriptor_fname: a string representing the descriptor filename to be
+%           used for the .mat descriptor data.
+%       - writepath: an existing path where the .mat data with the
+%           descriptors will be stored
+%       - descProps: descriptor properties, name, dimension, size, ...
+%
+% Authors: Jose Rivera and Ioannis Alexiou
+%          April, 2014
 %   
 
 % Load channelStack
@@ -43,14 +55,14 @@ emptyImg = zeros(Height,Width);
 
 for n = 1:numFrames
 
-[Grid,Y,X,LinSize] = MakeGrids(emptyImg,3);
+    [Grid,Y,X,LinSize] = MakeGrids(emptyImg,3);
 
-DenseMag = PoolingLayer(emptyImg,channelStack(:,:,n,:),LMs,LinSize,Y,X,descProps);
+    DenseMag = PoolingLayer(emptyImg,channelStack(:,:,n,:),LMs,LinSize,Y,X,descProps);
 
-DenseMag = single( DenseMag ./ repmat(sqrt(sum(DenseMag.^2,2))+eps,[1,size(DenseMag,2)]) );
+    DenseMag = single( DenseMag ./ repmat(sqrt(sum(DenseMag.^2,2))+eps,[1,size(DenseMag,2)]) );
 
-DescriptorStack(:,:,n) = DenseMag;
-GridStack(:,:,n) = Grid; 
+    DescriptorStack(:,:,n) = DenseMag;
+    GridStack(:,:,n) = Grid; 
 
 end
 
@@ -58,7 +70,7 @@ descProps(1).Dimension = size(DescriptorStack,2);
 
 save([writepath  descriptor_fname '_Descriptors'],'DescriptorStack','GridStack','descProps','-v7.3')
 
-end % ST_GABOR
+end % 
 
 function [GridLin,Y,X,LinSize] = MakeGrids(I,step)
 

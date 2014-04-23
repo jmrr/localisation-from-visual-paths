@@ -1,16 +1,30 @@
-function DSIFT(path,fname,writepath)
-% 
-% tname=dir([path '*.mp4']);
-% 
-% filename = [path tname.name];
-% obj = VideoReader(filename);
+function DSIFT(seqPath,desc_fname,writepath,varargin)
+%   DSIFT computes the dense-SIFT descriptors on a set of images found in a
+%       given path. Requires VLFEAT (http://www.vlfeat.org/)
+%   
+%   Usage:
+%   DSIFT(seqPath,desc_fname,writepath) generates the dense SIFT descriptor
+%   with a default step size of 3 pixels.
+%
+%   Inputs:
+%       - seqPath: an existing path where the sequence images are stored
+%       - desc_fname: a string representing the descriptor filename to be
+%           used for the .mat descriptor data.
+%       - writepath: an existing path where the .mat data with the
+%           descriptors will be stored
+%   DSIFT(seqPath,desc_fname,writepath,STEP) allows the selection of a custom
+%       step size
+%
+% Author: Ioannis Alexiou, 2013.
+% Modified by Jose Rivera, April 2014.  
+%
 
-files = dir([path '*.jpg']);
+files = dir([seqPath '*.jpg']);
 
 % num Frames
 numFrames = length(files); 
 
-single_frame = imread([path files(1).name]);
+single_frame = imread([seqPath files(1).name]);
 
 Height = size(single_frame, 1);
 Width = size(single_frame, 2);
@@ -26,17 +40,21 @@ DescriptorStack = [];
 
 % SIFT descriptor parameters
 
+if nargin < 4 % Default case
+    step = 3; % Step between descriptor centres, or grid step size.
+else 
+    step = varargin{1};
+end
+
 smoothingSigma = 1.2; % smoothingSigma = (binSize/magnif)^2 - .25; where 
                       % magnif is the relationship between keypoint scale
                       % and bin size. By default, magnif is 3.00
                       
-step = 3; % Step between descriptor centres, or grid step size.
-
 binSize = 3; 
 
 for i = 1:numFrames
 
-    I = single(rgb2gray(imread([path files(i).name])));
+    I = single(rgb2gray(imread([seqPath files(i).name])));
     
     Is = vl_imsmooth(I,smoothingSigma);
     
@@ -52,6 +70,6 @@ for i = 1:numFrames
 
 end
 
-save([writepath  fname '_Descriptors'],'DescriptorStack','GridStack','-v7.3')
+save([writepath  desc_fname '_Descriptors'],'DescriptorStack','GridStack','-v7.3')
 
 end % end DSIFT function

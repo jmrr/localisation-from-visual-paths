@@ -1,4 +1,22 @@
 function [descProps] = ST_GAUSS(seqPath,fname,writepath)
+%   ST_GAUSS generates a gradient field by applying 5x5 derivative of
+%   Gaussian masks and an 11-point Gaussian smoothing filter in the
+%   temporal direction (sigma=2). These gradients are to be used with
+%   ST_descriptor_construction to construct a space-time descriptor.
+%
+%   Inputs:
+%       - seqPath: an existing path where the sequence images are stored
+%       - descriptor_fname: a string representing the descriptor filename to be
+%           used for the .mat descriptor data.
+%       - writepath: an existing path where the .mat data with the
+%           descriptors will be stored
+%
+%   Output:
+%       -descProps: descriptor properties
+%   
+%    Authors: Jose Rivera and Ioannis Alexiou
+%          April, 2014
+%
 
 % List files
 

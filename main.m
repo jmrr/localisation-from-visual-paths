@@ -1,15 +1,15 @@
 % MAIN is a script that  selects the descriptors that are going to be
-% computed on the visual paths datasets.
+% computed on the visual paths dataset.
 %
 % Authors: Jose Rivera-Rubio and Ioannis Alexiou 
 %          {jose.rivera,ia2109}@imperial.ac.uk
-% Date: April, 2013
+% Date: April, 2014
 
 % CONSTANT GLOBAL variables
 
 DATASET_DIR = '/media/bg-PictureThis/VISUAL_PATHS/v5.0';
 
-CORRIDORS = 1:10;
+CORRIDORS = 1:6;
 
 PASSES = 1:10;
 
@@ -17,7 +17,7 @@ FRAME_FOLDER = 'frames_resized_w208p';
 
 DESCRIPTOR_DESTINATION_FOLDER = './descriptors';
 
-DESCRIPTOR = 'ST_GABOR'; % LW_COLOR, SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
+DESCRIPTOR = 'DSIFT'; % LW_COLOR, SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
 
 % Other global variables
 descriptor_fname_str = 'C%dP%d';

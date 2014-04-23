@@ -1,5 +1,8 @@
 function subspaces = attentional_subspaces(diameter,rho,alpha_center,alpha,beta) %, r1 , r2 ,mlt
-% ATTENTIONAL SUBSPACES 
+% ATTENTIONAL SUBSPACES generates the spatial pooling patterns that is used
+% to capture local information from dense-like descriptors. A total of 17
+% pooling patterns or "lobes" are generated (2 radii, 8 orientations and a central
+% "blob").
 %
 % Author: Ioannis Alexiou, 2013.
 % Modified by Jose Rivera, March 2014.  
@@ -17,15 +20,15 @@ radius = sqrt( (2*(x+0.5)/cols).^2 + (2*(y+0.5)/rows).^2 ); % r = sqrt(x^2+y^2)
 
 i = 9;
 
-radius=1.4143-radius;
+radius = 1.4143-radius;
 
-pow=4;  % 4 with 0.3549 , 6 with 0.3479
+pow = 4;  % 4 with 0.3549 , 6 with 0.3479
 
 Center = exp(-alpha_center*(log(radius/1.41).^pow)); 
 
 subspaces(:,:,1:8) = repmat(Center,1,1,8);
 
-radius=1.4143-radius; % invert the radius
+radius = 1.4143-radius; % invert the radius
 
 theta = atan2(-y,x); % angular space              
 
