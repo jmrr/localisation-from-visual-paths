@@ -46,11 +46,7 @@ for corr = corridors
         selected_descr./repmat((desc_norm + eps),[1,desc_dim]);
     
     % Show message
-    if (isrow(training_set)) 
-        training_name = num2str(training_set');
-    else
-        training_name = num2str(training_set);
-    end
+    training_name = sprintf('%d',training_set);
 
     fprintf('Permuted samples from: %s\n',training_name);
     
@@ -59,8 +55,9 @@ for corr = corridors
     VWords = yael_kmeans(single(selected_descr)',num_words,'niter',20,'verbose',2,'seed',3);
     
     % Save dictionary
-    mkdir(dict_path,c);
-    save(fullfile(dict_path,c,['dictionary_P' training_name '.mat']),'VWords')
+    savepath = fullfile(dict_path,feature_type,c);
+    mkdir(savepath);
+    save(fullfile(savepath,['dictionary_' c '_P' training_name '.mat']),'VWords')
 
     
 end % end for corridors
