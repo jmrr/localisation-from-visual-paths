@@ -36,7 +36,7 @@ for f = 1:numFrames
 
     [~,words_id] = max(projected_descriptor,[],2);
 
-    HoVW = hist(words_id,numWords);
+    HoVW = hist(words_id,1:numWords);
 
     encoded_pass(f,:) = HoVW;
 

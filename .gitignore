@@ -1,2 +1,5 @@
 descriptors/
 dictionaries/
+kernels/
+descriptors
+yael_kmeans/
