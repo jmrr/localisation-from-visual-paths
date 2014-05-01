@@ -12,7 +12,7 @@ KERNEL_PATH = './kernels';
 
 hovw_str = 'hovw_HA_C%d_P%s_%d.mat';
 
-kernel_str = 'kernel_HA_chi2_C%d_P%s_%d.mat';
+kernel_str = 'C%d_kernel_HA_chi2_P%s_%d.mat';
 
 for corr = CORRIDORS
 

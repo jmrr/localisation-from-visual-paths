@@ -36,9 +36,14 @@ for corr = CORRIDORS
             descriptors_path = fullfile('./descriptors',feature_type,c,p);
 
             descriptors_fname_str = sprintf(desc_str,corr,pass);
-
-            load(fullfile(descriptors_path,descriptors_fname_str)); % Load DescriptorStack
-
+            
+            try                
+                load(fullfile(descriptors_path,descriptors_fname_str)); % Load DescriptorStack
+            catch
+                fail_msg = ['Failed to load descriptor ' c p];
+                disp(fail_msg);
+            end % end try/catch
+            
             % Encode descriptors with dictionary: vector quantisation
 
             HoVW = encode_hovw_HA(VWords,DescriptorStack);
