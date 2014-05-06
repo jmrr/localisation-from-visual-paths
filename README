@@ -37,3 +37,11 @@ DESCRIPTOR: Type of descriptors to be calculated. To choose from
     - SF_GABOR: Frame-based DAISY-like descriptors
     - ST_GABOR: Spatio-temporal Gabors.
     - ST_GAUSS: Spatio-temporal, Spatial Derivative, Temporal Gaussian
+
+2. create_dictionaries
+    -> cluster_descriptors
+    OR
+    -> cluster_descriptors_sparse (for Keypoint-SIFT)
+
+3. hovw_encoding
+    -> encode_hovw_HA

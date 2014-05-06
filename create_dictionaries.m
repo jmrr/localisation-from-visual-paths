@@ -10,7 +10,7 @@ addpath('./yael_kmeans/');
 num_words = 4000;
 
 descriptors_path = './descriptors';
-feature_type = 'ST_GAUSS';
+feature_type = 'SIFT';
 corridors = 1:6;
 dict_path = 'dictionaries';
 
@@ -26,7 +26,9 @@ for p = passes
     
     training_set = passes;
     training_set(p) = [];
-    
-    cluster_descriptors(descriptors_path,feature_type,corridors,num_words,training_set,dict_path)
-    
+    if strcmpi(feature_type,'SIFT')
+            cluster_descriptors_sparse(descriptors_path,feature_type,corridors,num_words,training_set,dict_path)
+    else % dense
+            cluster_descriptors(descriptors_path,feature_type,corridors,num_words,training_set,dict_path)
+    end
 end % end for loop

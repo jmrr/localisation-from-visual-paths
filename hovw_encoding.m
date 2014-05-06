@@ -1,10 +1,12 @@
 % function encode_hovw_HA(feature_type)
 
-feature_type = 'DSIFT';
+feature_type = 'SIFT';
 
 CORRIDORS = 1;
 
 PASSES = 1:10;
+
+SELECTOR = 1:10;
 
 desc_str = 'C%dP%d_Descriptors.mat';
 
@@ -12,7 +14,7 @@ dict_str = 'dictionary_C%d_P%s.mat';
 
 for corr = CORRIDORS
 
-    for sel = 2:10
+    for sel = SELECTOR
             
         c = ['C' num2str(corr)]; % corridor string
         

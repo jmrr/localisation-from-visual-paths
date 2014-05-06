@@ -1,8 +1,10 @@
 function Kernel = run_kernel_HA
 
+%% PARAMETERS %%
+
 feature_type = 'DSIFT';
 
-CORRIDORS = 1;
+CORRIDORS = 1:6;
 
 PASSES = 1:10;
 
@@ -13,6 +15,8 @@ KERNEL_PATH = './kernels';
 hovw_str = 'hovw_HA_C%d_P%s_%d.mat';
 
 kernel_str = 'C%d_kernel_HA_chi2_P%s_%d.mat';
+
+% END OF PARAMETERS
 
 for corr = CORRIDORS
 
@@ -74,7 +78,8 @@ for corr = CORRIDORS
         save_path = fullfile(KERNEL_PATH,feature_type,c);
 
         mkdir(save_path);
-
+        warning('off','last');
+        
         kernel_fname_str = sprintf(kernel_str,corr,training_set_str,pass);
 
         save(fullfile(save_path,kernel_fname_str),'Kernel');
