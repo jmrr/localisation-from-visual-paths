@@ -1,6 +1,6 @@
-feature_type = 'SF_GABOR';
+feature_type = 'ST_GAUSS';
 
-CORRIDORS = 1:6;
+CORRIDORS = 6;
 
 KERNEL_PATH = './kernels';
 
@@ -8,14 +8,17 @@ GROUND_TRUTH_PATH = '/media/bg-PictureThis/VISUAL_PATHS/v5.0/ground_truth';
 
 METRIC = 'max';
 
+DEBUG = 0; % 1 shows waitbars, 0 does not.
 
 for corr = CORRIDORS
     
     c = ['C' num2str(corr)]; % corridor string
 
-    results_path = fullfile(KERNEL_PATH,feature_type,c);
+    kernel_results_path = fullfile(KERNEL_PATH,feature_type,c);
     
-    evaluation_nn_VW(results_path,GROUND_TRUTH_PATH,METRIC)
+    evaluation_nn_VW(kernel_results_path,GROUND_TRUTH_PATH,METRIC,DEBUG)
+    
+    fprintf('Evaluation finished for corridor %d:\n',corr);
     
 end % end for loop
 

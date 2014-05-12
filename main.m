@@ -33,7 +33,7 @@ for corr = CORRIDORS
         frames_folder = fullfile(working_path,FRAME_FOLDER,filesep);
         
         writepath = fullfile(DESCRIPTOR_DESTINATION_FOLDER,...
-                        DESCRIPTOR,['C' num2str(corr)],['P' num2str(p)],filesep);
+                        DESCRIPTOR,corridor,pass,filesep);
         % Create descriptor writepath if it doesn't exist
         mkdir(writepath);
 
@@ -74,8 +74,10 @@ for corr = CORRIDORS
                     % Construct the descriptor
                     ST_descriptor_construction(gradients_fname,descriptor_fname,writepath,descProps);
             end
-        %waitbar(j/PASSES(end));
+            
+        disp(['Finished encoding pass ' pass]);
     end
+    fprintf('Finished computing descriptors %s for corridor %s.\n',DESCRIPTOR,corr);
     %close(h);
 end
 

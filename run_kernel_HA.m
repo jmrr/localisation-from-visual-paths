@@ -1,8 +1,8 @@
-function Kernel = run_kernel_HA
+function [] = run_kernel_HA
 
 %% PARAMETERS %%
 
-feature_type = 'DSIFT';
+feature_type = 'ST_GAUSS';
 
 CORRIDORS = 1:6;
 
@@ -53,8 +53,6 @@ for corr = CORRIDORS
             dictionaries_path = fullfile('./dictionaries',feature_type,c);
             hovw_fname_str = sprintf(hovw_str,corr,training_set_str,db);
 
-%             hovw_fname_str = sprintf(hovw_str_regexp,corr,db);
-
             curr_db_file = dir(fullfile(dictionaries_path,hovw_fname_str));
 
             load(fullfile(dictionaries_path,curr_db_file(1).name)); % Load encoded db pass
@@ -85,58 +83,8 @@ for corr = CORRIDORS
         save(fullfile(save_path,kernel_fname_str),'Kernel');
         
         clear Kernel;
-
+        
+        disp(['Finished encoding pass ' p]);
     end
+    fprintf('Hard assignment encoding done for corridor %s.\n',c);
 end
-
-
-
-
-% featype='SIFT';
-% 
-% for corridor=1:6
-% 
-% path=fullfile(pwd,['Cor',num2str(corridor)],featype);
-% 
-% % files=dir(fullfile(path, '*_Descriptors.mat'));
-% 
-% for com=6%1:5
-%     
-% selector=1:5;
-% % selector(com)=[];
-% 
-% % name = num2str(1000*selector(1)+100*selector(2)+10*selector(3)+selector(4));
-% name = num2str(10000*selector(1)+1000*selector(2)+100*selector(3)+10*selector(4)+selector(5));
-% 
-% 
-% % FileName=['Cor',num2str(corridor),'-Pass*.mat'];
-% 
-% FileQuery=['Cor',num2str(corridor),'-Pass',num2str(com),'_HistHA_',name,'_',num2str(com),'.mat'];
-% 
-% load(fullfile(path,FileQuery))
-% 
-% % need to normalize
-% 
-% Stack_Q = HoVW_Layer1 ./ repmat(sqrt(sum(HoVW_Layer1.^2,2))+eps,1,size(HoVW_Layer1,2));
-% 
-% Stack_Q = vl_homkermap( Stack_Q', 1, 'kchi2')';
-% 
-% for i=1:5%:4
-% 
-% read = fullfile(path,['Cor',num2str(corridor),'-Pass',num2str(selector(i)),'_HistHA_' name '_' num2str(selector(i)) '.mat']);
-% 
-% load(read); Stack_T = HoVW_Layer1 ./ repmat(sqrt(sum(HoVW_Layer1.^2,2))+eps,1,size(HoVW_Layer1,2));
-% 
-% Stack_T = vl_homkermap( Stack_T', 1, 'kchi2')';
-% 
-% Kernel(i) = {Stack_Q*Stack_T'};
-% 
-% end
-% 
-% write = fullfile(path,['Cor',num2str(corridor),'_KenrelChi2_' name '_' num2str(com) '.mat']);
-% save(write,'Kernel','-v7.3')
-% 
-% disp(['PermSamples' num2str(name)])
-% end
-% disp(['Corridor' num2str(corridor)])
-% end

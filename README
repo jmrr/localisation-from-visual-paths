@@ -43,5 +43,21 @@ DESCRIPTOR: Type of descriptors to be calculated. To choose from
     OR
     -> cluster_descriptors_sparse (for Keypoint-SIFT)
 
-3. hovw_encoding
-    -> encode_hovw_HA
+3. hovw_encoding (hard assingment vector quantisation
+    -> hovw_encoding
+        -> encode_hovw_HA
+        -> encode_hovw_HA_sparse (for Keypoint-SIFT)
+
+
+4. kernel Hard-Assignment with Chi2 kernel function
+    -> run_kernel_HA
+5. Run evaluation routine to add the error measurement to the kernels.
+    -> run_evaluation_nn_VW
+        -> Modify feature type and paths.
+        -> evaluation_nn_VW
+[6]. [Optional: Move kernels to one folder]
+    -> cd /folder/to/kernels
+    -> mkmdir all_chi2
+    -> find . -name *.mat -exec cp -vf {} all_chi2/ \;
+7. Generate PDF results and plots with 
+    -> results_generation.m
