@@ -6,13 +6,16 @@
 %   num_words: number of visual words of the dictionary
 %
 
-addpath('./yael_kmeans/');
-num_words = 4000;
+% PARAMETERS
 
-descriptors_path = './descriptors';
-feature_type = 'SIFT';
-corridors = 1:6;
-dict_path = 'dictionaries';
+addpath('./yael_kmeans/');
+NUM_WORDS = 4000;
+DESC_PATH = './descriptors';
+DICT_PATH = './dictionaries/%d';
+FEAT_TYPE = 'SIFT';
+CORRIDORS = 1:6;
+PASSES    = 1:10;
+
 
 % From the case of all passes contributing to the dictionary to the case of
 % only one pass contributing to the dictionary, select all the possible
@@ -20,15 +23,16 @@ dict_path = 'dictionaries';
 
 % For the time being, leave only one out.
 
-passes = 1:10;
 
-for p = passes
+dict_path = sprintf(DICT_PATH,NUM_WORDS);
+
+for p = PASSES
     
-    training_set = passes;
+    training_set = PASSES;
     training_set(p) = [];
-    if strcmpi(feature_type,'SIFT')
-            cluster_descriptors_sparse(descriptors_path,feature_type,corridors,num_words,training_set,dict_path)
+    if strcmpi(FEAT_TYPE,'SIFT')
+            cluster_descriptors_sparse(DESC_PATH,FEAT_TYPE,CORRIDORS,NUM_WORDS,training_set,dict_path)
     else % dense
-            cluster_descriptors(descriptors_path,feature_type,corridors,num_words,training_set,dict_path)
+            cluster_descriptors(DESC_PATH,FEAT_TYPE,CORRIDORS,NUM_WORDS,training_set,dict_path)
     end
 end % end for loop

@@ -2,21 +2,21 @@ function [] = run_kernel_HA
 
 %% PARAMETERS %%
 
-feature_type = 'ST_GAUSS';
+FEAT_TYPE   = 'ST_GAUSS'; % SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
+ENCODING    = 'HA'; % 'HA', 'VLAD'
+DICT_PATH   = './dictionaries/%d'; 
+NUM_WORDS   = 4000;
+CORRIDORS   = 1:6;
+PASSES      = 1:10;
+KERNEL_PATH = './kernels/%s';
 
-CORRIDORS = 1:6;
 
-PASSES = 1:10;
 
-DICT_PATH = './dictionaries';
-
-KERNEL_PATH = './kernels';
-
-hovw_str = 'hovw_HA_C%d_P%s_%d.mat';
-
-kernel_str = 'C%d_kernel_HA_chi2_P%s_%d.mat';
-
-% END OF PARAMETERS
+% Path strings, modify if NOT using the default suggested paths.
+hovw_str    = 'hovw_HA_C%d_P%s_%d.mat';
+kernel_str  = 'C%d_kernel_HA_chi2_P%s_%d.mat';
+dict_path   = sprintf(DICT_PATH,NUM_WORDS);
+kernel_path = sprintf(KERNEL_PATH,ENCODING);
 
 for corr = CORRIDORS
 
@@ -29,7 +29,7 @@ for corr = CORRIDORS
         training_set(pass) = [];
         
         % Construct dictionary path and load encoded pass.
-        dictionaries_path = fullfile(DICT_PATH,feature_type,c);
+        dictionaries_path = fullfile(dict_path,FEAT_TYPE,c);
         
         training_set_str = sprintf('%d',training_set);
         hovw_fname_str = sprintf(hovw_str,corr,training_set_str,pass);
@@ -50,7 +50,7 @@ for corr = CORRIDORS
             % Construct dictionary path and load encoded pass.
             hovw_str_regexp = 'hovw_HA_C%d_P*_%d.mat';
 
-            dictionaries_path = fullfile('./dictionaries',feature_type,c);
+            dictionaries_path = fullfile(dict_path,FEAT_TYPE,c);
             hovw_fname_str = sprintf(hovw_str,corr,training_set_str,db);
 
             curr_db_file = dir(fullfile(dictionaries_path,hovw_fname_str));
@@ -73,7 +73,7 @@ for corr = CORRIDORS
         
         % Save kernel
 
-        save_path = fullfile(KERNEL_PATH,feature_type,c);
+        save_path = fullfile(kernel_path,FEAT_TYPE,c);
 
         mkdir(save_path);
         warning('off','last');
