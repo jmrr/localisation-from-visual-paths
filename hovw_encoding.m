@@ -4,11 +4,11 @@
 
 % CONSTANT PARAMETERS
 
-FEAT_TYPE = 'DSIFT'; % SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
-NUM_WORDS = 256;
-ENCODING  = 'HA'; % 'HA', 'VLAD'
+FEAT_TYPE = 'SIFT'; % SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
+NUM_WORDS = 400;
+ENCODING  = 'VLAD'; % 'HA', 'VLAD'
 DESC_PATH = './descriptors';
-DICT_PATH = './dictionaries/%d'; 
+DICT_PATH = './dictionaries/%d';
 CORRIDORS = 1:6;
 PASSES    = 1:10;
 SELECTOR  = 1:10; % Leave one out strategy pass selector.
@@ -61,14 +61,16 @@ for corr = CORRIDORS
             % Encode descriptors with dictionary: vector quantisation
             
             if strcmpi(FEAT_TYPE,'SIFT')
-                HoVW = encode_hovw_HA_sparse(VWords,DescriptorStack);
+                fun_str = ['encode_hovw_' ENCODING '_sparse(VWords,DescriptorStack)'];
+                HoVW = eval(fun_str);
             else
-                HoVW = encode_hovw_HA(VWords,DescriptorStack);
+                fun_str = ['encode_hovw_' ENCODING '(VWords,DescriptorStack)'];
+                HoVW = eval(fun_str);
             end
             
             
             write_path = fullfile(dictionaries_path,...
-                ['hovw_HA_' c '_P' training_set_str '_' num2str(pass) '.mat']);
+                ['hovw_' ENCODING '_' c '_P' training_set_str '_' num2str(pass) '.mat']);
             save(write_path,'HoVW');
             
             disp( ['Pass ' p]);
