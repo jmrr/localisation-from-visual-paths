@@ -8,6 +8,7 @@ function  encoded_pass = encode_hovw_VLAD(VWords,DescriptorStack)
 %          April, 2014
 
 numFrames = size(DescriptorStack,3);
+numDescriptors = size(DescriptorStack,1);
 sizeDescriptors = size(VWords,1);
 numWords = size(VWords,2);
 
@@ -43,7 +44,7 @@ for f = 1:numFrames
     % Create an assignment matrix
     
     
-    assignments = zeros(numWords,numFrames,'single');
+    assignments = zeros(numWords,numDescriptors,'single');
     
     assignments(sub2ind(size(assignments),single(nn),1:length(nn))) = 1;
     
