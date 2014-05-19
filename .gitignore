@@ -1,2 +1,7 @@
 descriptors/
-./dictionaries/
+dictionaries/
+kernels/
+descriptors
+yael_kmeans/
+.fuse_hidden*
+*.mat

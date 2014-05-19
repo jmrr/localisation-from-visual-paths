@@ -1,4 +1,4 @@
-function [] = cluster_descriptors(descriptors_path,feature_type,corridors,num_words,training_set,dict_path)
+function [] = cluster_descriptors_sparse(descriptors_path,feature_type,corridors,num_words,training_set,dict_path)
 % CLUSTER_DESCRIPTORS(descriptors_path,feature_type,num_words,training_set)
 % groups randomly selected descriptors from the specified training set into 
 % num_words clusters using k-means.
@@ -14,25 +14,19 @@ selected_descr = [];
 
 for corr = corridors
 
-    for passes = training_set
+    for pass = training_set
         
         c = ['C' num2str(corr)]; % corridor string
-        p = ['P' num2str(passes)]; % pass string
+        p = ['P' num2str(pass)]; % pass string
         
         % Load all the descriptors for this particular pass.
         load(fullfile(descriptors_path,feature_type,c,p,...
             [c p '_Descriptors.mat']));
-        desc_dim = size(DescriptorStack,2);
-        % Randomly select 800 descriptors from each frame
-        rand_desc = randi([1 size(DescriptorStack,3)],[1 800]);
-        
-        % Randomly select 200 frames from the whole sequence
-        rand_frames = randi([1 size(DescriptorStack,1)],[1 200]);
+        desc_dim = size(DescriptorStack{1},1); % Size of descriptors
+        num_desc = size(DescriptorStack{1},2); % Number of descriptors
         
         % Stack up the selected descriptors (row wise).
-        selected_descr = [selected_descr; ...
-            reshape(shiftdim(DescriptorStack(rand_frames,:,rand_desc),2),...
-            [],desc_dim)];
+        selected_descr = [selected_descr; cat(2,DescriptorStack{:})']; % transpose for coherence with dense code.
         
         % Free up some memory
         clear DescriptorStack GridStack;
@@ -43,7 +37,7 @@ for corr = corridors
     desc_norm = sqrt(sum(selected_descr.^2,2));
     
     selected_descr = ...
-        selected_descr./repmat((desc_norm + eps),[1,desc_dim]);
+        double(selected_descr)./repmat((desc_norm + eps),[1,desc_dim]);
     
     % Show message
     training_name = sprintf('%d',training_set);
