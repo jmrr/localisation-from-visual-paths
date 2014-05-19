@@ -21,7 +21,7 @@ VWords = VWords./repmat(sqrt(sum(VWords.^2,1))+eps,[sizeDescriptors,1]);
 
 encoded_pass = [];
 
-for f = 1:1
+for f = 1:numFrames
 
     desc_curr_frame = DescriptorStack{f}; % Current frame descriptors
         

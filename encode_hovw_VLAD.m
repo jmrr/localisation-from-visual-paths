@@ -1,10 +1,10 @@
 function  encoded_pass = encode_hovw_VLAD(VWords,DescriptorStack)
 % ENCODE_HOVW_VLAD(VWords,DescriptorStack)
-% performs vector quantisation (hard assignment) on the descriptor stack
-% for a given pass and dictionary.
+%    performs vector quantisation (hard assignment) on the descriptor stack
+%    for a given pass and dictionary.
 %
 %   
-% Authors: Jose Rivera 
+% Authors: Jose Rivera
 %          April, 2014
 
 numFrames = size(DescriptorStack,3);
@@ -42,8 +42,7 @@ for f = 1:numFrames
     nn = vl_kdtreequery(kdtree,VWords,desc_curr_frame);
     
     % Create an assignment matrix
-    
-    
+        
     assignments = zeros(numWords,numDescriptors,'single');
     
     assignments(sub2ind(size(assignments),single(nn),1:length(nn))) = 1;

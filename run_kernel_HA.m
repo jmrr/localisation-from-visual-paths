@@ -3,9 +3,9 @@ function [] = run_kernel_HA
 %% PARAMETERS %%
 
 FEAT_TYPE   = 'ST_GAUSS'; % SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
-ENCODING    = 'HA'; % 'HA', 'VLAD'
+ENCODING    = 'HA'; % 'HA', 'VLAD', LLC
 DICT_PATH   = './dictionaries/%d'; 
-NUM_WORDS   = 4000;
+NUM_WORDS   = 4000; % 4000 (HA), 256 (VLAD)
 CORRIDORS   = 1:6;
 PASSES      = 1:10;
 KERNEL_PATH = './kernels/%s';
@@ -75,7 +75,7 @@ for corr = CORRIDORS
         save_path = fullfile(kernel_path,FEAT_TYPE,c);
 
         mkdir(save_path);
-        warning('off','last');
+        warning('off');
 
         kernel_fname_str = sprintf(kernel_str,corr,ENCODING,KERNEL,training_set_str,pass);
 
@@ -86,4 +86,5 @@ for corr = CORRIDORS
         disp(['Finished encoding pass ' p]);
     end
     fprintf('Hard assignment encoding done for corridor %s.\n',c);
+    warning('on');
 end

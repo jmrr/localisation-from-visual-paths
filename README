@@ -45,12 +45,18 @@ DESCRIPTOR: Type of descriptors to be calculated. To choose from
 
 3. hovw_encoding (hard assingment vector quantisation
     -> hovw_encoding
+       Modify the parameters of the encoding, which will automatically call
+       the following functions
         -> encode_hovw_HA
         -> encode_hovw_HA_sparse (for Keypoint-SIFT)
-
+        -> encode_hovw_VLAD
+        -> encode_hovw_VLAD_sparse (for Keypoint-SIFT)
+        -> encode_hovw_LLC
+        -> encode_hovw_LLC_sparse (for Keypoint-SIFT)
 
 4. kernel Hard-Assignment with Chi2 kernel function
     -> run_kernel_HA
+    -> run_kernel_Hellinger
 5. Run evaluation routine to add the error measurement to the kernels.
     -> run_evaluation_nn_VW
         -> Modify feature type and paths.
