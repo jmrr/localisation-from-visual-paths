@@ -1,6 +1,8 @@
-This is a Matlab code to extract visual descriptors from video sequences.
-The code is ready to be used with the RSM dataset (http://rsm.bicv.org)
-but can be used on any sort of image sequences.
+This is a Matlab code to extract visual descriptors and implement a bag of
+visual words pipeline from video sequences.
+The code is customised and ready to be used with the RSM dataset 
+(http://rsm.bicv.org) but can be used on any sort of image sequences if the
+directory paths are correctly specified.
 
 Current implemented descriptor extraction methods (description below):
 LW_COLOR, SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS
@@ -13,14 +15,18 @@ Authors: Jose Rivera (jose.rivera@imperial.ac.uk)
 
 Web: http://www.bicv.org
 
-Date: v1.0 04/2014
+Date: v2.0 05/2014
 
 Requirements:
----------------------
-SIFT and DSIFT require VLFEAT (http://www.vlfeat.org/)
+============
 
+SIFT, DSIFT, VLAD and kernel implementations require VLFEAT (http://www.vlfeat.org/)
+Clustering requires INRIA's Yael K-means (https://gforge.inria.fr/projects/yael/)
 
 Running Instructions:
+====================
+
+Descriptor generation
 ---------------------
 
 1. Run main.m selecting the following parameters before running the loop:
@@ -38,32 +44,36 @@ DESCRIPTOR: Type of descriptors to be calculated. To choose from
     - ST_GABOR: Spatio-temporal Gabors.
     - ST_GAUSS: Spatio-temporal, Spatial Derivative, Temporal Gaussian
 
-2. create_dictionaries
+Bag of Words pipeline
+---------------------
+
+2. create_dictionaries (k-means vector quantization)
     -> cluster_descriptors
     OR
     -> cluster_descriptors_sparse (for Keypoint-SIFT)
 
-3. hovw_encoding (hard assingment vector quantisation
+3. hovw_encoding (Hard assigment, VLAD, or LLC)
     -> hovw_encoding
        Modify the parameters of the encoding, which will automatically call
-       the following functions
-        -> encode_hovw_HA
-        -> encode_hovw_HA_sparse (for Keypoint-SIFT)
-        -> encode_hovw_VLAD
-        -> encode_hovw_VLAD_sparse (for Keypoint-SIFT)
-        -> encode_hovw_LLC
-        -> encode_hovw_LLC_sparse (for Keypoint-SIFT)
+       encode_hovw_METHOD/encode_hovw_METHOD_sparse (for Keypoint-SIFT),
+       where METHOD = 
+        HA, "Visual categorization with bags of keypoints", Dance et al., 2004,
+        VLAD, "Aggregating local descriptors into a compact image representation", Jegou et al., 2010,
+        LLC, "Locality-constrained Linear Coding for Image Classification", Wang et al., 2010.
 
-4. kernel Hard-Assignment with Chi2 kernel function
+4. Kernels for histograms
     -> run_kernel_HA
     -> run_kernel_Hellinger
+
 5. Run evaluation routine to add the error measurement to the kernels.
     -> run_evaluation_nn_VW
         -> Modify feature type and paths.
         -> evaluation_nn_VW
+
 [6]. [Optional: Move kernels to one folder]
     -> cd /folder/to/kernels
     -> mkmdir all_chi2
     -> find . -name *.mat -exec cp -vf {} all_chi2/ \;
+
 7. Generate PDF results and plots with 
     -> results_generation.m
