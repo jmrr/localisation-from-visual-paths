@@ -1,30 +1,23 @@
-GROUND_TRUTH_PATH = '/media/bg-PictureThis/VISUAL_PATHS/v5.0/ground_truth';
-FEAT_TYPE         = 'ST_GAUSS';
-CORRIDORS         = 1:6;
-KERNEL_PATH       = './kernels/%s';
-ENCODING          = 'HA'; % 'HA', 'VLAD'
-METRIC            = 'max';
-
-DEBUG = 0; % 1 shows waitbars, 0 does not.
-
+function run_evaluation_nn_VW(params)
 
 % Path strings, modify if NOT using the default suggested paths.
 
-kernel_path = sprintf(KERNEL_PATH,ENCODING);
+kernel_path = sprintf(params.kernelPath,params.encoding);
 
-for corr = CORRIDORS
+for corr = params.corridors
     
     c = ['C' num2str(corr)]; % corridor string
-
+    
     kernel_results_path = fullfile(kernel_path,feature_type,c);
     
-    evaluation_nn_VW(kernel_results_path,GROUND_TRUTH_PATH,METRIC,DEBUG)
+    evaluation_nn_VW(kernel_results_path,params.groundTruthPath,params.metric,DEBUG)
     
     fprintf('Evaluation finished for corridor %d:\n',corr);
     
 end % end for loop
 
-corridor_str = sprintf('%d',CORRIDORS);
+corridor_str = sprintf('%d',params.corridors);
 
 fprintf('Ground truth evaluation generated for corridors %s and feature type %s :)\n',corridor_str,feature_type);
 
+end %end run_evaluation_nn_VW

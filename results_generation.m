@@ -13,11 +13,10 @@
 %   Author: Jose M. Rivera-Rubio (2013)
 
 %% VARIABLES TO SET
-FEAT_TYPE = 'ST_GAUSS';
 
 results_path_str = '/media/Data/Code/Jose/localisation_from_visual_paths/kernels/%s/all_chi2'; %'/media/bg-PictureThis/CODE/ICPR2014/sequence_descriptors/ResultsKernels/HELLINGER';
 
-results_path = sprintf(results_path_str,FEAT_TYPE);
+results_path = sprintf(results_path_str,params.descriptor);
 
 MAX_ERROR = 5000; % 50 metres
 

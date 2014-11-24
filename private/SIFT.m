@@ -1,4 +1,4 @@
-function SIFT(path,fname,writepath)
+function SIFT(path, fname, writepath)
 
 files = dir([path '*.jpg']);
 

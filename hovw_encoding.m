@@ -1,37 +1,30 @@
-% HOVW_ENCODING: Histogram of Visual Words script. Creates histograms with
-% codebook entries (visual words) frequencies by leaving one of the passes
-% out.
+function [] = hovw_encoding(params)
+% HOVW_ENCODING: Histogram of Visual Words encoding. Creates histograms
+% with codebook entries (visual words) frequencies by leaving one of the
+% passes out.
 
 % CONSTANT PARAMETERS
-
-FEAT_TYPE = 'DSIFT'; % SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
-NUM_WORDS = 4000; % 4000 (HA), 256 (VLAD)
-ENCODING  = 'LLC'; % 'HA', 'VLAD'
-DESC_PATH = './descriptors';
-DICT_PATH = './dictionaries/%d';
-CORRIDORS = 1:6;
-PASSES    = 1:10;
-SELECTOR  = 1:10; % Leave one out strategy pass selector.
+selector  = params.passes; % Leave one out strategy pass selector.
 
 % Path strings, modify if NOT using the default suggested paths.
 
 desc_str  = 'C%dP%d_Descriptors.mat';
 dict_str  = 'dictionary_C%d_P%s.mat';
-dict_path = sprintf(DICT_PATH,NUM_WORDS);
+dict_path = sprintf(params.dictPath,params.dictionarySize);
 
 % Main encoding loop
 
-for corr = CORRIDORS
+for corr = params.corridors
     
-    for sel = SELECTOR
+    for sel = selector
         
         c = ['C' num2str(corr)]; % corridor string
         
-        training_set = PASSES;
+        training_set = params.passes;
         training_set(sel) = [];
         
         % Construct dictionary path and load vocabulary.
-        dictionaries_path = fullfile(dict_path,FEAT_TYPE,c);
+        dictionaries_path = fullfile(dict_path,params.descriptor,c);
         
         training_set_str = sprintf('%d',training_set);
         dict_fname_str = sprintf(dict_str,corr,training_set_str);
@@ -40,11 +33,11 @@ for corr = CORRIDORS
         
         % Load query descriptors
         
-        for pass = PASSES
+        for pass = params.passes
             
             p = ['P' num2str(pass)]; % pass string
             
-            descriptors_path = fullfile(DESC_PATH,FEAT_TYPE,c,p);
+            descriptors_path = fullfile(params.descrDir,params.descriptor,c,p);
             
             descriptors_fname_str = sprintf(desc_str,corr,pass);
             
@@ -60,17 +53,17 @@ for corr = CORRIDORS
             
             % Encode descriptors with dictionary: vector quantisation
             
-            if strcmpi(FEAT_TYPE,'SIFT')
-                fun_str = ['encode_hovw_' ENCODING '_sparse(VWords,DescriptorStack)'];
+            if strcmpi(params.descriptor,'SIFT')
+                fun_str = ['encode_hovw_' params.encoding '_sparse(VWords,DescriptorStack)'];
                 HoVW = eval(fun_str);
             else
-                fun_str = ['encode_hovw_' ENCODING '(VWords,DescriptorStack)'];
+                fun_str = ['encode_hovw_' params.encoding '(VWords,DescriptorStack)'];
                 HoVW = eval(fun_str);
             end
             
             
             write_path = fullfile(dictionaries_path,...
-                ['hovw_' ENCODING '_' c '_P' training_set_str '_' num2str(pass) '.mat']);
+                ['hovw_' params.encoding '_' c '_P' training_set_str '_' num2str(pass) '.mat']);
             save(write_path,'HoVW');
             
             disp( ['Pass ' p]);
@@ -81,3 +74,5 @@ for corr = CORRIDORS
     disp(['Corridor ' c]);
     
 end % end corridor for loop
+
+end % end hovw_encoding

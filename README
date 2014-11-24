@@ -26,23 +26,60 @@ Clustering requires INRIA's Yael K-means (https://gforge.inria.fr/projects/yael/
 Running Instructions:
 ====================
 
-Descriptor generation
----------------------
+Run main.m 
 
-1. Run main.m selecting the following parameters before running the loop:
+Parameter selection
+-------------------
 
-DATASET_DIR: The root path of the RSM dataset
-CORRIDORS: Corridors to run [1:6]
-PASSES: Passes to run [1:10]
-FRAME_FOLDER: Folder name where all the frames have been extracted.
-DESCRIPTOR_DESTINATION_FOLDER
-DESCRIPTOR: Type of descriptors to be calculated. To choose from
+0. Parameter selection.
+
+Select your choice from the following parameters in the params structure before continuing:
+
+params = struct(...
+    'descriptor',    'SIFT',...  % SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
+    'corridors',     2,... % [1:6] 
+    'passes',        1,... % [1:10] 
+    'datasetDir',    '/media/PictureThis/VISUAL_PATHS/v6.0',...   % The root path of the RSM dataset        
+    'frameDir',      'frames_resized_w208p',... % Folder name where all the frames have been extracted.       
+    'descrDir',  ...
+    '/media/raid/Code/Jose/localisation_from_visual_paths/descriptors'
+    'dictionarySize', 4000, ...
+    'dictPath',       './dictionaries/%d', ...
+    'encoding', 'LLC', ... % 'HA', 'VLAD'
+    'kernel', 'chi2', ... % 'chi2', 'Hellinger'
+    'kernelPath', './kernels/%s', ...
+    'metric', 'max', ...
+    'groundTruthPath', '/media/PictureThis/VISUAL_PATHS/vMini/ground_truth', ...
+    'debug', 1 ... % 1 shows waitbars, 0 does not.
+    );
+
+These parameters are the following
+
+datasetDir: The root path of the RSM dataset
+corridors: Corridors to run [1:6] (RSM v6.0)
+passes: Passes to run [1:10] (RSM v6.0)
+frameDir: Folder name where all the frames have been extracted.
+descrDir
+descriptor: Type of descriptors to be calculated. To choose from
     - LW_COLOR: Lightweight spatio-temporal colour descriptor
     - SIFT: keypoint based SIFT descriptors
     - DSIFT: Dense SIFT
     - SF_GABOR: Frame-based DAISY-like descriptors
     - ST_GABOR: Spatio-temporal Gabors.
     - ST_GAUSS: Spatio-temporal, Spatial Derivative, Temporal Gaussian
+dictionarySize: number of visual words (parameter k in k-means)
+dictPath: directory where to store the created dictionaries.
+encoding: encoding method
+kernel:
+kernelPath:
+metric:
+groundTruthPath:
+debug:
+
+Descriptor generation
+---------------------
+
+1. computeDescriptors(params);
 
 Bag of Words pipeline
 ---------------------
@@ -54,7 +91,7 @@ Bag of Words pipeline
 
 3. hovw_encoding (Hard assigment, VLAD, or LLC)
     -> hovw_encoding
-       Modify the parameters of the encoding, which will automatically call
+       Remember to modify the parameters of the encoding, which will automatically call
        encode_hovw_METHOD/encode_hovw_METHOD_sparse (for Keypoint-SIFT),
        where METHOD = 
         HA, "Visual categorization with bags of keypoints", Dance et al., 2004,
@@ -67,7 +104,6 @@ Bag of Words pipeline
 
 5. Run evaluation routine to add the error measurement to the kernels.
     -> run_evaluation_nn_VW
-        -> Modify feature type and paths.
         -> evaluation_nn_VW
 
 [6]. [Optional: Move kernels to one folder]

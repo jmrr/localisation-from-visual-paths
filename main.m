@@ -1,80 +1,51 @@
-% MAIN is a script that  selects the descriptors that are going to be
-% computed on the visual paths dataset.
-%
-% Authors: Jose Rivera-Rubio and Ioannis Alexiou 
-%          {jose.rivera,ia2109}@imperial.ac.uk
-% Date: April, 2014
+% MAIN
 
-% CONSTANT GLOBAL variables
+%% Parameter variables. Change these values HERE
 
-DATASET_DIR  = '/media/bg-PictureThis/VISUAL_PATHS/v5.0';
-FRAME_FOLDER = 'frames_resized_w208p';
+params = struct(...
+    'descriptor',    'DSIFT',...  % SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
+    'corridors',     1:3,... % Corridors to run [1:6] (RSM v6.0)
+    'passes',        1:3,... % Passes to run [1:10] (RSM v6.0)
+    'datasetDir',    '/media/PictureThis/VISUAL_PATHS/vMini',...   % The root path of the RSM dataset
+    'frameDir',      'frames_resized_w208p',... % Folder name where all the frames have been extracted.
+    'descrDir',  ...
+    '/media/Data/localisation_from_visual_paths_data/descriptors', ...
+    'dictionarySize', 4000, ...
+    'dictPath',       './dictionaries/%d', ...
+    'encoding', 'LLC', ... % 'HA', 'VLAD'
+    'kernel', 'chi2', ... % 'chi2', 'Hellinger'
+    'kernelPath', './kernels/%s', ...
+    'metric', 'max', ...
+    'groundTruthPath', '/media/PictureThis/VISUAL_PATHS/vMini/ground_truth', ...
+    'debug', 1 ... % 1 shows waitbars, 0 does not.
+    );
 
-CORRIDORS    = 1:6;
-PASSES       = 1:10;
+%% Run setup
+setup
 
-DESC_DESTINATION_FOLDER = './descriptors';
-DESCRIPTOR = 'DSIFT'; % SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
+%% Compute the descriptors given the parameters
 
-% Other global variables
-descriptor_fname_str = 'C%dP%d';
+computeDescriptors(params);
 
-% MAIN LOOP
+%% Create_dictionaries (k-means vector quantization)
 
-for corr = CORRIDORS
-    corridor = ['C' num2str(corr)];
-    %h = waitbar(0,'Processing passes...');
-    for p = PASSES
-        pass = ['P' num2str(p)];
-        working_path = fullfile(DATASET_DIR,corridor,'videos',num2str(p));
-        frames_folder = fullfile(working_path,FRAME_FOLDER,filesep);
-        
-        writepath = fullfile(DESC_DESTINATION_FOLDER,...
-                        DESCRIPTOR,corridor,pass,filesep);
-        % Create descriptor writepath if it doesn't exist
-        mkdir(writepath);
+createDictionaries(params);
 
-        descriptor_fname = sprintf(descriptor_fname_str,corr,p);
-        
-            switch DESCRIPTOR
-                
-                case 'LW_COLOR' % Case of Lightweight color descriptors
+%% hovw_encoding (Hard assigment, VLAD, or LLC)
 
-                    LW_COLOR(frames_folder,descriptor_fname,writepath);
-      
-                case 'SF_GABOR' % Case of single-frame Gabor
-                    
-                    SF_GABOR(frames_folder,descriptor_fname,writepath);
-                    
-                case 'SIFT' % case of Sparse-SIFT based on keypoint detection
-      
-                    SIFT(frames_folder,descriptor_fname,writepath);
-                    
-                case 'DSIFT' % case of Dense-SIFT
+hovw_encoding(params);
 
-                    DSIFT(frames_folder,descriptor_fname,writepath);
-                    
-                case 'ST_GABOR' % Case of spatio-temporal Gabors
+%% kernels for histograms
 
-                    gradients_fname = [descriptor_fname '_gradients'];
-                    % Generate the gradients
-                    [descProps] = ST_GABOR(frames_folder,gradients_fname,writepath);
-                   
-                    % Construct the descriptor
-                    ST_descriptor_construction(gradients_fname,descriptor_fname,writepath,descProps);
-                case 'ST_GAUSS' % Case of spatio-temporal Gaussians
-
-                    gradients_fname = [descriptor_fname '_gradients'];
-                    % Generate the gradients
-                    [descProps] = ST_GAUSS(frames_folder,gradients_fname,writepath);
-                   
-                    % Construct the descriptor
-                    ST_descriptor_construction(gradients_fname,descriptor_fname,writepath,descProps);
-            end
-            
-        disp(['Finished encoding pass ' pass]);
-    end
-    fprintf('Finished computing descriptors %s for corridor %s.\n',DESCRIPTOR,corr);
-    %close(h);
+if (strcmp(params.kernel,'chi2'))
+    run_kernel_HA(params);
+else
+    run_kernel_Hellinger(params);
 end
 
+%% Run evaluation routine to add the error measurement to the kernels.
+run_evaluation_nn_VW(params);
+
+% Generate PDF results
+
+results_generation

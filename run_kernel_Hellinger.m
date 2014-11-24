@@ -1,42 +1,30 @@
-function [] = run_kernel_Hellinger
-
-%% PARAMETERS %%
-
-FEAT_TYPE   = 'ST_GABOR'; % SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
-ENCODING    = 'VLAD'; % 'HA', 'VLAD'
-DICT_PATH   = './dictionaries/%d'; 
-NUM_WORDS   = 256;
-CORRIDORS   = 1:6;
-PASSES      = 1:10;
-KERNEL_PATH = './kernels/%s';
-KERNEL = 'Hellinger';
-
+function [] = run_kernel_Hellinger(params)
 
 % Path strings, modify if NOT using the default suggested paths.
 hovw_str    = 'hovw_%s_C%d_P%s_%d.mat';
 kernel_str  = 'C%d_kernel_%s_%s_P%s_%d.mat';
-dict_path   = sprintf(DICT_PATH,NUM_WORDS);
-kernel_path = sprintf(KERNEL_PATH,ENCODING);
+dict_path   = sprintf(params.dictPath,params.dictionarySize);
+kernel_path = sprintf(params.kernelPath,params.encoding);
 
 % Anonymous function for the Hellinger Kernel
 
 Whiten=@(Vector)sign(Vector ).*  sqrt(abs(Vector));
 
-for corr = CORRIDORS
+for corr = params.corridors
 
-    for pass = PASSES
+    for pass = params.passes
             
         c = ['C' num2str(corr)]; % corridor string
         p = ['P' num2str(pass)]; % pass string       
         
-        training_set = PASSES;
+        training_set = params.passes;
         training_set(pass) = [];
         
         % Construct dictionary path and load encoded pass.
-        dictionaries_path = fullfile(dict_path,FEAT_TYPE,c);
+        dictionaries_path = fullfile(dict_path,params.descriptor,c);
         
         training_set_str = sprintf('%d',training_set);
-        hovw_fname_str = sprintf(hovw_str,ENCODING,corr,training_set_str,pass);
+        hovw_fname_str = sprintf(hovw_str,params.encoding,corr,training_set_str,pass);
         
         load(fullfile(dictionaries_path,hovw_fname_str)); % Load VWords
         
@@ -52,8 +40,8 @@ for corr = CORRIDORS
             
             % Construct dictionary path and load encoded pass.
 
-            dictionaries_path = fullfile(dict_path,FEAT_TYPE,c);
-            hovw_fname_str = sprintf(hovw_str,ENCODING,corr,training_set_str,db);
+            dictionaries_path = fullfile(dict_path,params.descriptor,c);
+            hovw_fname_str = sprintf(hovw_str,params.encoding,corr,training_set_str,db);
 
             curr_db_file = dir(fullfile(dictionaries_path,hovw_fname_str));
 
@@ -75,12 +63,12 @@ for corr = CORRIDORS
         
         % Save kernel
 
-        save_path = fullfile(kernel_path,FEAT_TYPE,c);
+        save_path = fullfile(kernel_path,params.descriptor,c);
 
         mkdir(save_path);
         warning('off');
         
-        kernel_fname_str = sprintf(kernel_str,corr,ENCODING,KERNEL,training_set_str,pass);
+        kernel_fname_str = sprintf(kernel_str,corr,params.encoding,params.kernel,training_set_str,pass);
 
         save(fullfile(save_path,kernel_fname_str),'Kernel');
         
