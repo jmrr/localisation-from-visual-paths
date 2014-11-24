@@ -9,13 +9,14 @@ LW_COLOR, SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS
 
 Current supported format of the sequences: JPG
 
-Authors: Jose Rivera (jose.rivera@imperial.ac.uk)
-         Ioannis Alexiou (i.alexiou@qmul.ac.uk)
-         Anil A. Bharath (a.bharath@imperial.ac.uk)
+Authors: 
+*          Jose Rivera (jose.rivera@imperial.ac.uk)
+*          Ioannis Alexiou (i.alexiou@qmul.ac.uk)
+*          Anil A. Bharath (a.bharath@imperial.ac.uk)
 
-Web: http://www.bicv.org
+Web: [http://www.bicv.org](http://www.bicv.org)
 
-Date: v2.0 05/2014
+Date: v3.0 11/2014
 
 Requirements:
 ============
@@ -31,9 +32,13 @@ Run main.m
 Parameter selection
 -------------------
 
-0. Parameter selection.
+*  Parameter selection.
 
 Select your choice from the following parameters in the params structure before continuing:
+
+
+```
+#!matlab
 
 params = struct(...
     'descriptor',    'SIFT',...  % SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
@@ -53,63 +58,116 @@ params = struct(...
     'debug', 1 ... % 1 shows waitbars, 0 does not.
     );
 
+```
+
 These parameters are the following
 
-datasetDir: The root path of the RSM dataset
-corridors: Corridors to run [1:6] (RSM v6.0)
-passes: Passes to run [1:10] (RSM v6.0)
-frameDir: Folder name where all the frames have been extracted.
-descrDir
-descriptor: Type of descriptors to be calculated. To choose from
-    - LW_COLOR: Lightweight spatio-temporal colour descriptor
-    - SIFT: keypoint based SIFT descriptors
-    - DSIFT: Dense SIFT
-    - SF_GABOR: Frame-based DAISY-like descriptors
-    - ST_GABOR: Spatio-temporal Gabors.
-    - ST_GAUSS: Spatio-temporal, Spatial Derivative, Temporal Gaussian
-dictionarySize: number of visual words (parameter k in k-means)
-dictPath: directory where to store the created dictionaries.
-encoding: encoding method
-kernel:
-kernelPath:
-metric:
-groundTruthPath:
-debug:
+* datasetDir: The root path of the RSM dataset
+* corridors: Corridors to run [1:6] (RSM v6.0)
+* passes: Passes to run [1:10] (RSM v6.0)
+* frameDir: Folder name where all the frames have been extracted.
+* descrDir
+* descriptor: Type of descriptors to be calculated. To choose from
+*     - LW_COLOR: Lightweight spatio-temporal colour descriptor
+*     - SIFT: keypoint based SIFT descriptors
+*     - DSIFT: Dense SIFT
+*     - SF_GABOR: Frame-based DAISY-like descriptors
+*     - ST_GABOR: Spatio-temporal Gabors.
+*     - ST_GAUSS: Spatio-temporal, Spatial Derivative, Temporal Gaussian
+* dictionarySize: number of visual words (parameter k in k-means)
+* dictPath: directory where to store the created dictionaries.
+* encoding: encoding method
+* kernel:
+* kernelPath:
+* metric:
+* groundTruthPath:
+* debug:
 
 Descriptor generation
 ---------------------
 
-1. computeDescriptors(params);
 
+```
+#!matlab
+
+computeDescriptors(params);
+
+```
 Bag of Words pipeline
 ---------------------
 
-2. create_dictionaries (k-means vector quantization)
-    -> cluster_descriptors
+* create_dictionaries (k-means vector quantization)
+   
+```
+#!matlab
+
+cluster_descriptors
+```
+
     OR
-    -> cluster_descriptors_sparse (for Keypoint-SIFT)
 
-3. hovw_encoding (Hard assigment, VLAD, or LLC)
-    -> hovw_encoding
-       Remember to modify the parameters of the encoding, which will automatically call
-       encode_hovw_METHOD/encode_hovw_METHOD_sparse (for Keypoint-SIFT),
-       where METHOD = 
-        HA, "Visual categorization with bags of keypoints", Dance et al., 2004,
-        VLAD, "Aggregating local descriptors into a compact image representation", Jegou et al., 2010,
-        LLC, "Locality-constrained Linear Coding for Image Classification", Wang et al., 2010.
+```
+#!matlab
 
-4. Kernels for histograms
-    -> run_kernel_HA
-    -> run_kernel_Hellinger
+cluster_descriptors_sparse (for Keypoint-SIFT)
+```
 
-5. Run evaluation routine to add the error measurement to the kernels.
-    -> run_evaluation_nn_VW
-        -> evaluation_nn_VW
 
-[6]. [Optional: Move kernels to one folder]
-    -> cd /folder/to/kernels
-    -> mkmdir all_chi2
-    -> find . -name *.mat -exec cp -vf {} all_chi2/ \;
+* hovw_encoding (Hard assigment, VLAD, or LLC)
+    
+```
+#!matlab
 
-7. Generate PDF results and plots with 
-    -> results_generation.m
+hovw_encoding
+
+%       Remember to modify the parameters of the encoding, which will automatically call
+%       encode_hovw_METHOD/encode_hovw_METHOD_sparse (for Keypoint-SIFT),
+%       where METHOD = 
+%*         HA, "Visual categorization with bags of keypoints", Dance et al., 2004,
+%*         VLAD, "Aggregating local descriptors into a compact image representation", Jegou et al., 2010,
+%*         LLC, "Locality-constrained Linear Coding for Image Classification", Wang et al., 2010.
+
+```
+* Kernels for histograms
+    
+```
+#!matlab
+
+run_kernel_HA
+```
+
+
+```
+#!matlab
+
+    run_kernel_Hellinger
+
+```
+
+* Run evaluation routine to add the error measurement to the kernels.
+
+```
+#!matlab
+
+    run_evaluation_nn_VW
+
+```
+
+* [Optional: Move kernels to one folder]
+
+```
+#!bash
+
+    cd /folder/to/kernels
+    mkdir all_chi2
+    find . -name *.mat -exec cp -vf {} all_chi2/ \;
+```
+
+
+* Generate PDF results and plots with 
+
+```
+#!matlab
+
+    results_generation.m
+```
