@@ -10,6 +10,7 @@ LW_COLOR, SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS
 Current supported format of the sequences: JPG
 
 Authors: 
+
 *          Jose Rivera (jose.rivera@imperial.ac.uk)
 *          Ioannis Alexiou (i.alexiou@qmul.ac.uk)
 *          Anil A. Bharath (a.bharath@imperial.ac.uk)
@@ -28,6 +29,14 @@ Running Instructions:
 ====================
 
 Run main.m 
+
+
+```
+#!matlab
+
+main
+```
+
 
 Parameter selection
 -------------------
@@ -68,12 +77,12 @@ These parameters are the following
 * frameDir: Folder name where all the frames have been extracted.
 * descrDir
 * descriptor: Type of descriptors to be calculated. To choose from
-*     - LW_COLOR: Lightweight spatio-temporal colour descriptor
-*     - SIFT: keypoint based SIFT descriptors
-*     - DSIFT: Dense SIFT
-*     - SF_GABOR: Frame-based DAISY-like descriptors
-*     - ST_GABOR: Spatio-temporal Gabors.
-*     - ST_GAUSS: Spatio-temporal, Spatial Derivative, Temporal Gaussian
+     - LW_COLOR: Lightweight spatio-temporal colour descriptor
+     - SIFT: keypoint based SIFT descriptors
+     - DSIFT: Dense SIFT
+     - SF_GABOR: Frame-based DAISY-like descriptors
+     - ST_GABOR: Spatio-temporal Gabors.
+     - ST_GAUSS: Spatio-temporal, Spatial Derivative, Temporal Gaussian
 * dictionarySize: number of visual words (parameter k in k-means)
 * dictPath: directory where to store the created dictionaries.
 * encoding: encoding method
@@ -102,12 +111,8 @@ Bag of Words pipeline
 #!matlab
 
 cluster_descriptors
-```
 
-    OR
-
-```
-#!matlab
+% OR
 
 cluster_descriptors_sparse (for Keypoint-SIFT)
 ```
@@ -123,9 +128,9 @@ hovw_encoding
 %       Remember to modify the parameters of the encoding, which will automatically call
 %       encode_hovw_METHOD/encode_hovw_METHOD_sparse (for Keypoint-SIFT),
 %       where METHOD = 
-%*         HA, "Visual categorization with bags of keypoints", Dance et al., 2004,
-%*         VLAD, "Aggregating local descriptors into a compact image representation", Jegou et al., 2010,
-%*         LLC, "Locality-constrained Linear Coding for Image Classification", Wang et al., 2010.
+%         HA, "Visual categorization with bags of keypoints", Dance et al., 2004,
+%         VLAD, "Aggregating local descriptors into a compact image representation", Jegou et al., 2010,
+%         LLC, "Locality-constrained Linear Coding for Image Classification", Wang et al., 2010.
 
 ```
 * Kernels for histograms
@@ -134,13 +139,10 @@ hovw_encoding
 #!matlab
 
 run_kernel_HA
-```
 
+% OR
 
-```
-#!matlab
-
-    run_kernel_Hellinger
+run_kernel_Hellinger
 
 ```
 
@@ -148,19 +150,16 @@ run_kernel_HA
 
 ```
 #!matlab
-
-    run_evaluation_nn_VW
-
+run_evaluation_nn_VW
 ```
 
 * [Optional: Move kernels to one folder]
 
 ```
 #!bash
-
-    cd /folder/to/kernels
-    mkdir all_chi2
-    find . -name *.mat -exec cp -vf {} all_chi2/ \;
+cd /folder/to/kernels
+mkdir all_chi2
+find . -name *.mat -exec cp -vf {} all_chi2/ \;
 ```
 
 
@@ -168,6 +167,5 @@ run_kernel_HA
 
 ```
 #!matlab
-
-    results_generation.m
+results_generation.m
 ```
