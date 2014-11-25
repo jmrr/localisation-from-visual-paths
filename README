@@ -30,15 +30,14 @@ Running Instructions:
 
 Run main.m 
 
-Detailed Instructions:
-=====================
-
 ```
 #!matlab
 
 main
 ```
 
+Detailed Instructions:
+=====================
 
 Parameter selection
 -------------------
