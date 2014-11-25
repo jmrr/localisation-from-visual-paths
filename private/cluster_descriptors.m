@@ -6,7 +6,7 @@ function [] = cluster_descriptors(descriptors_path,feature_type,corridors,num_wo
 % Requirements: YAEL K-MEANS package for fast clustering.
 % https://gforge.inria.fr/projects/yael/
 %
-%   
+
 % Authors: Jose Rivera and Ioannis Alexiou
 %          April, 2014
 

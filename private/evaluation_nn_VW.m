@@ -1,4 +1,4 @@
-function [] = evaluation_nn_VW(params, kernel_results_path,ground_truth_path,metric,DEBUG)
+function [] = evaluation_nn_VW(params, kernel_results_path)
 %EVALUATION_NN_VW obtains the closest neighbour distance for every frame in a
 %query pass based on visual words.
 % -Inputs:
@@ -17,6 +17,10 @@ function [] = evaluation_nn_VW(params, kernel_results_path,ground_truth_path,met
 %   evaluation_nn('/full/path/to/results','/full/path/to/ground_truth','min')
 %
 
+% Authors: Jose Rivera-Rubio and Ioannis Alexiou 
+%          {jose.rivera,ia2109}@imperial.ac.uk
+% Date: November, 2014
+
 % Constants and paths
 
 if (ispc)
@@ -24,7 +28,7 @@ if (ispc)
 else
     PATHSEP = '/';
 end
-addpath(ground_truth_path);
+addpath(params.groundTruthPath);
 
 gt_file_str = 'ground_truth_C%d_P%d.csv';
 
@@ -36,7 +40,7 @@ D = D(3:end);
 
 num_results_files = length(D);
 
-if (DEBUG)
+if (params.debug)
     waitbar_msg = '%d/%d files processed';
     h = waitbar(0,sprintf(waitbar_msg,0,num_results_files));
 end
@@ -80,7 +84,7 @@ for idx_files = 1:num_results_files
     training_set = params.passes;
     training_set(query_pass) = [];
     
-    if(strcmp(metric,'min'))
+    if(strcmp(params.metric,'min'))
         
         [v,idx] = cellfun(@(x) min(x,[],2),Kernel,'uniformoutput',false);
         values = cat(2,v{:});
@@ -89,7 +93,7 @@ for idx_files = 1:num_results_files
         [~,whichPass] = min(values,[],2);
         
         
-    elseif(strcmp(metric,'max'))
+    elseif(strcmp(params.metric,'max'))
         
         [v,idx] = cellfun(@(x) max(x,[],2),Kernel,'uniformoutput',false);
         values = cat(2,v{:});
@@ -109,17 +113,17 @@ for idx_files = 1:num_results_files
         SelectLocationEsts(Estimated_Location,gt,whichPass,indices,training_set);
     
     % Compute the error
-    error_in_cm = abs(gt_query-Estimated_Location);
+    error_in_cm = abs(gt_query(1:length(Estimated_Location)) - Estimated_Location);
     % Save (together with the kernels).
     
     save(results_file,'results','Estimated_Location','gt_query','error_in_cm','-append');
     
-    if(DEBUG)
+    if(params.debug)
         waitbar(idx_files/num_results_files,h,sprintf(waitbar_msg,idx_files,num_results_files));
     end
 end
 
-if(DEBUG)
+if(params.debug)
     close(h);
 end
 
@@ -139,4 +143,5 @@ for i= 1:length(Estimated_Location)
     Estimated_Location(i) = MatchGT{whichPass(i)}(indices(i,whichPass(i)));
     
 end
+
 end

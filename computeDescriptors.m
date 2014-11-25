@@ -1,7 +1,7 @@
 function [] = computeDescriptors(params)
 % COMPUTEDESCRIPTORS is a function that  selects the descriptors that are going to be
 % computed on the visual paths dataset.
-%
+
 % Authors: Jose Rivera-Rubio and Ioannis Alexiou 
 %          {jose.rivera,ia2109}@imperial.ac.uk
 % Date: November, 2014

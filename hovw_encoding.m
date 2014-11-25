@@ -1,7 +1,11 @@
 function [] = hovw_encoding(params)
-% HOVW_ENCODING: Histogram of Visual Words encoding. Creates histograms
+% HOVW_ENCODING Histogram of Visual Words encoding. Creates histograms
 % with codebook entries (visual words) frequencies by leaving one of the
 % passes out.
+
+% Authors: Jose Rivera-Rubio and Ioannis Alexiou 
+%          {jose.rivera,ia2109}@imperial.ac.uk
+% Date: November, 2014
 
 % CONSTANT PARAMETERS
 selector  = params.passes; % Leave one out strategy pass selector.
@@ -10,7 +14,7 @@ selector  = params.passes; % Leave one out strategy pass selector.
 
 desc_str  = 'C%dP%d_Descriptors.mat';
 dict_str  = 'dictionary_C%d_P%s.mat';
-dict_path = sprintf(params.dictPath,params.dictionarySize);
+dict_path = fullfile(params.dictPath,num2str(params.dictionarySize));
 
 % Main encoding loop
 

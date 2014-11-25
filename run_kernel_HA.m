@@ -1,10 +1,16 @@
 function [] = run_kernel_HA(params)
+% RUN_KERNEL_HA constructs the Hard Assignment kernel based on the chi2
+% distance
+
+% Authors: Jose Rivera-Rubio and Ioannis Alexiou 
+%          {jose.rivera,ia2109}@imperial.ac.uk
+% Date: April, 2014
 
 % Path strings, modify if NOT using the default suggested paths.
 hovw_str    = 'hovw_%s_C%d_P%s_%d.mat';
 kernel_str  = 'C%d_kernel_%s_%s_P%s_%d.mat';
-dict_path   = sprintf(params.dictPath,params.dictionarySize);
-kernel_path = sprintf(params.kernelPath,params.encoding);
+dict_path   = fullfile(params.dictPath,num2str(params.dictionarySize));
+kernel_path = fullfile(params.kernelPath,params.encoding);
 
 for corr = params.corridors
 
