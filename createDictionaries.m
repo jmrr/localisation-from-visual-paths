@@ -13,7 +13,7 @@ function [] = createDictionaries(params)
 %
 % See also private/CLUSTER_DESCRIPTORS, private/CLUSTER_DESCRIPTORS_SPARSE
 
-% Authors: Jose Rivera-Rubio and Ioannis Alexiou 
+% Authors: Jose Rivera-Rubio and Ioannis Alexiou
 %          {jose.rivera,ia2109}@imperial.ac.uk
 % Date: November, 2014
 
@@ -23,7 +23,12 @@ dict_path = fullfile(params.dictPath,num2str(params.dictionarySize));
 for p = params.passes
     
     training_set = params.passes;
-    training_set(p) = [];
+    if (length(training_set) <= 1)
+        training_set = params.passes;
+    else
+        training_set(p) = [];
+        
+    end
     if strcmpi(params.descriptor,'SIFT')
         cluster_descriptors_sparse(params.descrDir,params.descriptor,params.corridors,params.dictionarySize,training_set,dict_path)
     else % dense
