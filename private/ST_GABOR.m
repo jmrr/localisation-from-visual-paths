@@ -68,7 +68,7 @@ end
 
 filteredSeqX = imfilter(sequence,spatialFilter,'conv');
 filteredSeqY = imfilter(sequence,spatialFilter','conv');
-filteredSeqZ = shiftdim(imfilter(shiftdim(sequence,2),temporalFilter','conv'),1);
+filteredSeqZ = shiftdim(imfilter(shiftdim(sequence,2),temporalFilter','conv'),1); % time axis
 
 % Constructing the feature vector:
 
