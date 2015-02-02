@@ -3,7 +3,7 @@ function [] = hovw_encoding(params)
 % with codebook entries (visual words) frequencies by leaving one of the
 % passes out.
 
-% Authors: Jose Rivera-Rubio and Ioannis Alexiou 
+% Authors: Jose Rivera-Rubio and Ioannis Alexiou
 %          {jose.rivera,ia2109}@imperial.ac.uk
 % Date: November, 2014
 
@@ -25,8 +25,12 @@ for corr = params.corridors
         c = ['C' num2str(corr)]; % corridor string
         
         training_set = params.passes;
-        training_set(sel) = [];
-        
+        if (length(training_set) <= 1)
+            training_set = params.passes;
+        else
+            training_set(sel) = [];
+            
+        end
         % Construct dictionary path and load vocabulary.
         dictionaries_path = fullfile(dict_path,params.descriptor,c);
         

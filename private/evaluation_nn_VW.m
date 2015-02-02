@@ -17,7 +17,7 @@ function [] = evaluation_nn_VW(params, kernel_results_path)
 %   evaluation_nn('/full/path/to/results','/full/path/to/ground_truth','min')
 %
 
-% Authors: Jose Rivera-Rubio and Ioannis Alexiou 
+% Authors: Jose Rivera-Rubio and Ioannis Alexiou
 %          {jose.rivera,ia2109}@imperial.ac.uk
 % Date: November, 2014
 
@@ -82,7 +82,12 @@ for idx_files = 1:num_results_files
     
     % Once this is known, modify the training indices
     training_set = params.passes;
-    training_set(query_pass) = [];
+    
+    if (length(training_set) <= 1)
+        training_set = params.passes;
+    else
+        training_set(query_pass) = [];
+    end
     
     if(strcmp(params.metric,'min'))
         

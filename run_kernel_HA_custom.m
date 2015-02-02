@@ -1,4 +1,4 @@
-function [] = run_kernel_HA(params)
+function [] = run_kernel_HA_custom(params, training_set)
 % RUN_KERNEL_HA constructs the Hard Assignment kernel based on the chi2
 % distance
 
@@ -18,15 +18,7 @@ for corr = params.corridors
         
         c = ['C' num2str(corr)]; % corridor string
         p = ['P' num2str(pass)]; % pass string
-        
-        training_set = params.passes;
-        
-        if (length(training_set) <= 1)
-            training_set = params.passes;
-        else
-            training_set(pass) = [];
-        end
-        
+              
         
         % Construct dictionary path and load encoded pass.
         dictionaries_path = fullfile(dict_path,params.descriptor,c);
