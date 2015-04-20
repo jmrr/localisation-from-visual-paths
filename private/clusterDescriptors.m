@@ -1,4 +1,4 @@
-function [] = cluster_descriptors(descriptors_path,feature_type,corridors,num_words,training_set,dict_path)
+function [] = clusterDescriptors(descriptors_path,feature_type,corridors,num_words,training_set,dict_path)
 % CLUSTER_DESCRIPTORS(descriptors_path,feature_type,num_words,training_set)
 % groups randomly selected descriptors from the specified training set into 
 % num_words clusters using k-means.
