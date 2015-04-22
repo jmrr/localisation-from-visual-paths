@@ -1,5 +1,5 @@
 % SETUP adds the paths for the necessary 3rd party libraries
 
-addpath('/home/jose/Applications/yael_matlab_linux64_v401');
-addpath('/home/jose/Applications/vlfeat-0.9.19/toolbox');
+addpath('/home/jmr10/Applications/yael');
+addpath('/home/jmr10/Applications/vlfeat-0.9.19/toolbox');
 vl_setup;

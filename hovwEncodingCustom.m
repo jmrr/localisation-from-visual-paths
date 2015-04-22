@@ -1,5 +1,5 @@
-function [] = hovw_encoding_custom(params, training_set, query_set)
-% HOVW_ENCODING_CUSTOM Histogram of Visual Words encoding. Creates histograms
+function [] = hovwEncodingCustom(params, training_set, query_set)
+% HOVWENCODINGCUSTOM Histogram of Visual Words encoding. Creates histograms
 % with codebook entries (visual words) frequencies by leaving one of the
 % passes out.
 

@@ -1,4 +1,4 @@
-function [] = createDictionaries(params)
+function [] = createDictionaries(params, trainingSet)
 % CREATEDICTIONARIES generates all the combination of passes and calls
 % cluster_descriptors to construct bag of visual words (BOVW) dictionaries.
 %
@@ -13,12 +13,12 @@ function [] = createDictionaries(params)
 %
 % See also private/CLUSTER_DESCRIPTORS, private/CLUSTER_DESCRIPTORS_SPARSE
 
-% Authors: Jose Rivera-Rubio and Ioannis Alexiou
-%          {jose.rivera,ia2109}@imperial.ac.uk
+% Authors: Jose Rivera-Rubio
+%          {jose.rivera}@imperial.ac.uk
 % Date: November, 2014
 
 
-dict_path = fullfile(params.dictPath,num2str(params.dictionarySize));
+dictPath = fullfile(params.dictPath,num2str(params.dictionarySize));
 
 for p = params.passes
     
@@ -30,9 +30,9 @@ for p = params.passes
         
     end
     if strcmpi(params.descriptor,'SIFT')
-        cluster_descriptors_sparse(params.descrDir,params.descriptor,params.corridors,params.dictionarySize,training_set,dict_path)
+        clusterDescriptorsSparse(params.descrDir,params.descriptor,params.corridors,params.dictionarySize,trainingSet,dictPath)
     else % dense
-        cluster_descriptors(params.descrDir,params.descriptor,params.corridors,params.dictionarySize,training_set,dict_path)
+        clusterDescriptors(params.descrDir,params.descriptor,params.corridors,params.dictionarySize,trainingSet,dictPath)
     end
 end % end for loop
 

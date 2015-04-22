@@ -1,5 +1,5 @@
-function [] = hovw_encoding(params)
-% HOVW_ENCODING Histogram of Visual Words encoding. Creates histograms
+function [] = hovwEncoding(params)
+% HOVWENCODING Histogram of Visual Words encoding. Creates histograms
 % with codebook entries (visual words) frequencies by leaving one of the
 % passes out.
 
