@@ -1,4 +1,4 @@
-function LW_COLOR(seqPath,desc_fname,writepath)
+function LW_COLOR(seqPath, descrSavePath)
 %   LW_COLOR computes the frame level space-time descriptors. They are
 %   lightweight (LW) and make use of colour information (COLOR).
 %
@@ -106,9 +106,9 @@ DescriptorStack = reshape(DescriptorBlocks,[1 size(DescriptorBlocks)]);
 
 % and save results
 
-save([writepath  desc_fname '_Descriptors'],'DescriptorStack','-v7.3')
+save(descrSavePath,'DescriptorStack','-v7.3')
 
-function D = processblock(x,K);
+function D = processblock(x,K)
 
 y = double(x);
 clear x;

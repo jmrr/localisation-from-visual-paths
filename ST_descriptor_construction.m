@@ -1,4 +1,4 @@
-function ST_descriptor_construction(gradients_fname,descriptor_fname,writepath,descProps)
+function ST_descriptor_construction(gradients_fname, descrSavePath,descProps)
 % ST_DESCRIPTOR CONSTRUCTION constructs the space-time descriptors given a
 % gradient field previously obtained. A pattern of 17 lobes is applied over
 % a patch of 11x11 pixels in spatial extent. The spatial pooling patterns
@@ -68,7 +68,7 @@ end
 
 descProps(1).Dimension = size(DescriptorStack,2);
 
-save([writepath  descriptor_fname '_Descriptors'],'DescriptorStack','GridStack','descProps','-v7.3')
+save(descrSavePath,'DescriptorStack','GridStack','descProps','-v7.3')
 
 end % 
 

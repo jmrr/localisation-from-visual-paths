@@ -28,6 +28,8 @@ Clustering requires INRIA's Yael K-means (https://gforge.inria.fr/projects/yael/
 Running Instructions:
 ====================
 
+Modify `setup.m` to include the paths to the dependencies.
+
 Run main.m 
 
 ```

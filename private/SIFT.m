@@ -1,4 +1,4 @@
-function SIFT(path, fname, writepath)
+function SIFT(path, descrSavePath)
 
 files = dir([path '*.jpg']);
 
@@ -19,4 +19,4 @@ for i = 1:numFrames
     KeypointStack{i} = keypoints;
 end
 
-save([writepath  fname '_Descriptors'],'DescriptorStack','KeypointStack','-v7.3')
+save([writepath  descrSavePath '_Descriptors'],'DescriptorStack','GridStack','-v7.3')

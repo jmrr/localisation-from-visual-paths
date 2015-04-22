@@ -9,7 +9,7 @@
 
 params = struct(...
     'descriptor',    'DSIFT',...  % SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
-    'corridors',     3:6,... % Corridors to run [1:6] (RSM v6.0)
+    'corridors',     1:6,... % Corridors to run [1:6] (RSM v6.0)
     'passes',        1:10,... % Passes to run [1:10] (RSM v6.0)
     'trainingSet',   [1:3,5], ... 
     'datasetDir',    '/media/PictureThis/VISUAL_PATHS/v6.0',...   % The root path of the RSM dataset
@@ -18,7 +18,7 @@ params = struct(...
     '/media/Data/localisation_from_visual_paths_data/descriptors/', ...
     'dictionarySize', 4000, ...
     'dictPath',       './dictionaries', ...
-    'encoding', 'HA', ... % 'HA', 'VLAD'
+    'encoding', 'HA', ... % 'HA', 'VLAD', 'LLC'
     'kernel', 'chi2', ... % 'chi2', 'Hellinger'
     'kernelPath', './kernels', ...
     'metric', 'max', ...
@@ -31,13 +31,13 @@ setup
 
 %% Compute the descriptors given the parameters
 
-% computeDescriptors(params);
+computeDescriptors(params);
 
-%% Create_dictionaries (k-means vector quantization)
+%% CreateDictionaries (k-means vector quantization)
 
 createDictionaries(params, params.trainingSet);
 
-%% hovw_encoding (Hard assigment, VLAD, or LLC)
+%% hovwEncoding (Hard assigment, VLAD, or LLC)
 
 if(isempty(params.trainingSet)) 
     hovwEncoding(params); % if no training set, leave one out

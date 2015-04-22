@@ -1,4 +1,4 @@
-function DSIFT(seqPath,desc_fname,writepath,varargin)
+function DSIFT(seqPath, descrSavePath,varargin)
 %   DSIFT computes the dense-SIFT descriptors on a set of images found in a
 %       given path. Requires VLFEAT (http://www.vlfeat.org/)
 %   
@@ -70,6 +70,6 @@ for i = 1:numFrames
 
 end
 
-save([writepath  desc_fname '_Descriptors'],'DescriptorStack','GridStack','-v7.3')
+save(descrSavePath,'DescriptorStack','GridStack','-v7.3')
 
 end % end DSIFT function

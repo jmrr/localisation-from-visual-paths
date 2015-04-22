@@ -1,4 +1,4 @@
-function SF_GABOR(seqPath,descriptor_fname,writepath)
+function SF_GABOR(seqPath, descrSavePath)
 %   SF_GABOR  constructs a single-frame descriptor based on 17 DAISY-like
 %   pooling arrangements applied over the result of 2D convolution
 %   between the frames and and antysymmetric, 2D Gabors.
@@ -67,7 +67,7 @@ for n = 1:numFrames
 
 end
 
-save([writepath  descriptor_fname '_Descriptors'],'DescriptorStack','GridStack','-v7.3')
+save([writepath  descrSavePath '_Descriptors'],'DescriptorStack','GridStack','-v7.3')
 end % end SF_GABOR
 
 function [GridLin,Y,X,LinSize] = MakeGrids(I,step)
