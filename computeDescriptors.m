@@ -27,7 +27,7 @@ for corr = params.corridors
         descrFname    = sprintf(descrFnameStr,corr,p);
         descrSavePath = [writepath  descrFname '_Descriptors'];
         
-        if (~exist(descrSavePath, 'var'))
+        if (~exist([descrSavePath '.mat'], 'file'))
             
             switch params.descriptor
                 
