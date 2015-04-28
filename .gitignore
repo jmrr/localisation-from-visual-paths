@@ -5,3 +5,4 @@ descriptors
 yael_kmeans/
 .fuse_hidden*
 *.mat
+*~
