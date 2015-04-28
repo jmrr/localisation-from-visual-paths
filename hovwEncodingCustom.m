@@ -64,7 +64,7 @@ for pass = query_set
     disp( ['Pass ' p]);
     
 end % end pass for loop
-disp(['All passes encoded for dictionary ' training_set_str]);
+disp(['All passes encoded for dictionary ' training_set_str 'and corridor ' params.corridor]);
 
 
 end % end hovw_encoding
