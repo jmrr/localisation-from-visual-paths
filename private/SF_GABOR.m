@@ -67,7 +67,7 @@ for n = 1:numFrames
 
 end
 
-save([writepath  descrSavePath '_Descriptors'],'DescriptorStack','GridStack','-v7.3')
+save([descrSavePath,'_Descriptors'],'DescriptorStack','GridStack','-v7.3')
 end % end SF_GABOR
 
 function [GridLin,Y,X,LinSize] = MakeGrids(I,step)
