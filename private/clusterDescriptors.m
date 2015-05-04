@@ -56,6 +56,7 @@ for corr = corridors
     
     % Save dictionary
     savepath = fullfile(dict_path,feature_type,c);
+
     mkdir(savepath);
     save(fullfile(savepath,['dictionary_' c '_P' training_name '.mat']),'VWords')
 

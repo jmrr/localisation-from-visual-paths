@@ -8,7 +8,7 @@
 %% Parameter variables. Change these values HERE
 
 params = struct(...
-    'descriptor',    'SF_GABOR',...  % SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
+    'descriptor',    'ST_GAUSS',...  % SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
     'corridors',     1:6,... % Corridors to run [1:6] (RSM v6.0)
     'passes',        1:10,... % Passes to run [1:10] (RSM v6.0)
     'trainingSet',   [1:3,5], ... 
@@ -30,23 +30,25 @@ params = struct(...
 setup
 
 %% Compute the descriptors given the parameters
-
+tic;
 computeDescriptors(params);
-
+disp('Descriptors computed');
+toc
 %% CreateDictionaries (k-means vector quantization)
-
+tic;
 createDictionaries(params, params.trainingSet);
-
+disp('Dictionary created');
+toc
 %% hovwEncoding (Hard assigment, VLAD, or LLC)
-
+tic;
 if length(params.corridors) > 1
    batchEncoding(params);
 else
    encoding(params);       
 end
-
+toc
 %% kernels for histograms
-
+tic;
 if (isempty(params.trainingSet))
     if (strcmp(params.kernel,'chi2'))
         run_kernel_HA(params);
@@ -56,7 +58,8 @@ if (isempty(params.trainingSet))
 else
     run_kernel_HA_custom(params, params.trainingSet)
 end
-
+disp('Kernels encoded')
+toc
 %% Run evaluation routine to add the error measurement to the kernels.
 run_evaluation_nn_VW(params);
 

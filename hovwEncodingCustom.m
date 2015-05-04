@@ -36,33 +36,35 @@ for pass = query_set
     
     descriptors_fname_str = sprintf(desc_str,params.corridors,pass);
     
-    while true
-        try
-            load(fullfile(descriptors_path,descriptors_fname_str)); % Load DescriptorStack
-            break
-        catch
-            fail_msg = ['Failed to load descriptor ' c p];
-            disp(fail_msg);
-        end % end try/catch
-    end
-    
-    % Encode descriptors with dictionary: vector quantisation
-    
-    if strcmpi(params.descriptor,'SIFT')
-        fun_str = ['encode_hovw_' params.encoding '_sparse(VWords,DescriptorStack)'];
-        HoVW = eval(fun_str);
-    else
-        fun_str = ['encode_hovw_' params.encoding '(VWords,DescriptorStack)'];
-        HoVW = eval(fun_str);
-    end
-    
-    
     write_path = fullfile(dictionaries_path,...
         ['hovw_' params.encoding '_' c '_P' training_set_str '_' num2str(pass) '.mat']);
-    save(write_path,'HoVW');
     
-    disp( ['Pass ' p]);
-    
+    if (~exist(write_path, 'file'))
+
+        while true
+            try
+                load(fullfile(descriptors_path,descriptors_fname_str)); % Load DescriptorStack
+                break
+            catch
+                fail_msg = ['Failed to load descriptor ' c p];
+                disp(fail_msg);
+            end % end try/catch
+        end
+        
+        % Encode descriptors with dictionary: vector quantisation
+        
+        if strcmpi(params.descriptor,'SIFT')
+            fun_str = ['encode_hovw_' params.encoding '_sparse(VWords,DescriptorStack)'];
+            HoVW = eval(fun_str);
+        else
+            fun_str = ['encode_hovw_' params.encoding '(VWords,DescriptorStack)'];
+            HoVW = eval(fun_str);
+        end
+        
+        save(write_path,'HoVW');
+        
+        disp( ['Pass ' p]);
+    end
 end % end pass for loop
 disp(['All passes encoded for dictionary ' training_set_str ' and corridor ' c]);
 

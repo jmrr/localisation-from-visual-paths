@@ -51,7 +51,7 @@ for corr = params.corridors
                     
                     gradientsFname = [descrFname '_gradients'];
                     % Generate the gradients
-                    [descProps] = ST_GABOR(framesDir,gradientsFname,writepath);
+                    [descProps] = ST_GABOR(framesDir,gradientsFname,descrSavePath);
                     
                     % Construct the descriptor
                     ST_descriptor_construction(gradientsFname, descrSavePath, descProps);
@@ -59,7 +59,7 @@ for corr = params.corridors
                     
                     gradientsFname = [descrFname '_gradients'];
                     % Generate the gradients
-                    [descProps] = ST_GAUSS(framesDir,gradientsFname,writepath);
+                    [descProps] = ST_GAUSS(framesDir,gradientsFname,descrSavePath);
                     
                     % Construct the descriptor
                     ST_descriptor_construction(gradientsFname, descrSavePath, descProps);

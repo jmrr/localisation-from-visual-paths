@@ -19,7 +19,7 @@ function ST_descriptor_construction(gradients_fname, descrSavePath,descProps)
 
 % Load channelStack
 
-filename = [writepath gradients_fname];
+filename = [descrSavePath gradients_fname];
 load([filename,'.mat']);
 
 Height = size(channelStack,1);
