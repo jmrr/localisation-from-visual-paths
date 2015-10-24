@@ -17,7 +17,7 @@ Authors:
 
 Web: [http://www.bicv.org](http://www.bicv.org)
 
-Date: v3.0 11/2014
+Date: v4.0 10/2015
 
 Requirements:
 ============
@@ -28,7 +28,7 @@ Clustering requires INRIA's Yael K-means (https://gforge.inria.fr/projects/yael/
 Running Instructions:
 ====================
 
-Modify `setup.m` to include the paths to the dependencies.
+Rename `initialize.m.template` to `initialize.m`
 
 Run main.m 
 
@@ -44,6 +44,13 @@ Detailed Instructions:
 Parameter selection
 -------------------
 
+*  Dependency paths: include the paths to the dependencies.
+- `YAEL`: https://gforge.inria.fr/projects/yael/
+- `VLFEAT`: http://www.vlfeat.org/
+
+A version of these libraries is included in the Downloads section of the repository
+
+
 *  Parameter selection.
 
 Select your choice from the following parameters in the params structure before continuing:
@@ -53,20 +60,21 @@ Select your choice from the following parameters in the params structure before 
 #!matlab
 
 params = struct(...
-    'descriptor',    'SIFT',...  % SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
-    'corridors',     2,... % [1:6] 
-    'passes',        1,... % [1:10] 
-    'datasetDir',    '/media/PictureThis/VISUAL_PATHS/v6.0',...   % The root path of the RSM dataset        
-    'frameDir',      'frames_resized_w208p',... % Folder name where all the frames have been extracted.       
+    'descriptor',    'ST_GAUSS',...  % SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
+    'corridors',     1:6,... % Corridors to run [1:6] (RSM v6.0)
+    'passes',        1:10,... % Passes to run [1:10] (RSM v6.0)
+    'trainingSet',   [1:3,5], ... 
+    'datasetDir',    '/data/datasets/RSM/visual_paths/v6.0',...   % The root path of the RSM dataset
+    'frameDir',      'frames_resized_w208p',... % Folder name where all the frames have been extracted.
     'descrDir',  ...
-    '/media/raid/Code/Jose/localisation_from_visual_paths/descriptors'
-    'dictionarySize', 4000, ...
-    'dictPath',       './dictionaries', ...
-    'encoding', 'LLC', ... % 'HA', 'VLAD'
+    '/data/datasets/RSM/descriptors', ...
+    'dictionarySize', 400, ...
+    'dictPath',       '/data/datasets/RSM/dictionaries', ...
+    'encoding', 'HA', ... % 'HA', 'VLAD', 'LLC'
     'kernel', 'chi2', ... % 'chi2', 'Hellinger'
-    'kernelPath', './kernels', ...
+    'kernelPath', '/data/datasets/RSM/kernels', ...
     'metric', 'max', ...
-    'groundTruthPath', '/media/PictureThis/VISUAL_PATHS/vMini/ground_truth', ...
+    'groundTruthPath', './ground_truth', ...
     'debug', 1 ... % 1 shows waitbars, 0 does not.
     );
 
@@ -77,6 +85,7 @@ These parameters are the following
 * datasetDir: The root path of the RSM dataset
 * corridors: Corridors to run [1:6] (RSM v6.0)
 * passes: Passes to run [1:10] (RSM v6.0)
+* trainingSet: training set to use for dictionary construction
 * frameDir: Folder name where all the frames have been extracted.
 * descrDir
 * descriptor: Type of descriptors to be calculated. To choose from
