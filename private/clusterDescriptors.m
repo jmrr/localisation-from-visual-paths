@@ -1,4 +1,4 @@
-function [] = clusterDescriptors(descriptors_path,feature_type,corridors,num_words,training_set,dict_path)
+function [] = clusterDescriptors(descriptorsPath,feature,corridors,numWords,trainingSet,dictPath)
 % CLUSTER_DESCRIPTORS(descriptors_path,feature_type,num_words,training_set)
 % groups randomly selected descriptors from the specified training set into 
 % num_words clusters using k-means.
@@ -8,31 +8,31 @@ function [] = clusterDescriptors(descriptors_path,feature_type,corridors,num_wor
 %
 
 % Authors: Jose Rivera and Ioannis Alexiou
-%          April, 2014
+%          October, 2015
 
-selected_descr = [];
+selectedDescriptors = [];
 
 for corr = corridors
 
-    for passes = training_set
+    for passes = trainingSet
         
         c = ['C' num2str(corr)]; % corridor string
         p = ['P' num2str(passes)]; % pass string
         
         % Load all the descriptors for this particular pass.
-        load(fullfile(descriptors_path,feature_type,c,p,...
+        load(fullfile(descriptorsPath,feature,c,p,...
             [c p '_Descriptors.mat']));
-        desc_dim = size(DescriptorStack,2);
+        descDim = size(DescriptorStack,2);
         % Randomly select 800 descriptors from each frame
-        rand_desc = randi([1 size(DescriptorStack,3)],[1 800]);
+        randomDescriptorSet = randi([1 size(DescriptorStack,3)],[1 800]);
         
         % Randomly select 200 frames from the whole sequence
-        rand_frames = randi([1 size(DescriptorStack,1)],[1 200]);
+        randomFramesSet = randi([1 size(DescriptorStack,1)],[1 200]);
         
         % Stack up the selected descriptors (row wise).
-        selected_descr = [selected_descr; ...
-            reshape(shiftdim(DescriptorStack(rand_frames,:,rand_desc),2),...
-            [],desc_dim)];
+        selectedDescriptors = [selectedDescriptors; ...
+            reshape(shiftdim(DescriptorStack(randomFramesSet,:,randomDescriptorSet),2),...
+            [],descDim)];
         
         % Free up some memory
         clear DescriptorStack GridStack;
@@ -40,25 +40,25 @@ for corr = corridors
     
     % Normalisation of the selected descriptors
     
-    desc_norm = sqrt(sum(selected_descr.^2,2));
+    normalizedDescriptors = sqrt(sum(selectedDescriptors.^2,2));
     
-    selected_descr = ...
-        selected_descr./repmat((desc_norm + eps),[1,desc_dim]);
+    selectedDescriptors = ...
+        selectedDescriptors./repmat((normalizedDescriptors + eps),[1,descDim]);
     
     % Show message
-    training_name = sprintf('%d',training_set);
+    trainingName = sprintf('%d',trainingSet);
 
-    fprintf('Permuted samples from: %s\n',training_name);
+    fprintf('Permuted samples from: %s\n',trainingName);
     
     % K-MEANS (Requires Yael k-means from INRIA).
     
-    VWords = yael_kmeans(single(selected_descr)',num_words,'niter',20,'verbose',2,'seed',3);
+    VWords = yael_kmeans(single(selectedDescriptors)',numWords,'niter',20,'verbose',2,'seed',3);
     
     % Save dictionary
-    savepath = fullfile(dict_path,feature_type,c);
+    savepath = fullfile(dictPath,feature,c);
 
     mkdir(savepath);
-    save(fullfile(savepath,['dictionary_' c '_P' training_name '.mat']),'VWords')
+    save(fullfile(savepath,['dictionary_' c '_P' trainingName '.mat']),'VWords')
 
     
 end % end for corridors
