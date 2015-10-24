@@ -5,7 +5,9 @@ function [] = hovwEncoding(params)
 
 % Authors: Jose Rivera-Rubio and Ioannis Alexiou
 %          {jose.rivera,ia2109}@imperial.ac.uk
-% Date: November, 2014
+%
+% Initial version: April, 2014
+% Last Modified: Otober, 2015
 
 % CONSTANT PARAMETERS
 selector  = params.passes; % Leave one out strategy pass selector.

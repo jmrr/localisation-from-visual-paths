@@ -6,6 +6,9 @@ function [pdf] = randomSampling(error_all,NUM_RUNS,NUM_SAMPLES,MAX_ERROR)
 % Usage: to use within queryRandomisation/queryRandomisationDense
 %
 % Author: Jose M. Rivera-Rubio (2013).
+%
+% Initial version: April, 2014
+% Last Modified: Otober, 2015
 
 Nbins = 100;
 bins = linspace(0,MAX_ERROR,Nbins);

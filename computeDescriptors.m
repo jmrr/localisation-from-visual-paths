@@ -4,7 +4,9 @@ function [] = computeDescriptors(params)
 
 % Authors: Jose Rivera-Rubio and Ioannis Alexiou
 %          {jose.rivera,ia2109}@imperial.ac.uk
-% Date: November, 2014
+%
+% Initial version: April, 2014
+% Last Modified: Otober, 2015
 
 % Other global variables
 descrFnameStr = 'C%dP%d';
@@ -66,8 +68,10 @@ for corr = params.corridors
             end
             
             disp(['Finished encoding pass ' pass]);
+        else
+            disp('Descriptor already exists');
         end
-        disp('Descriptor already exist');
+            disp('Descriptor created');
     end
     fprintf('Finished computing descriptors %s for corridor %s.\n', params.descriptor, num2str(corr));
     %close(h);
