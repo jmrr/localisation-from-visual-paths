@@ -19,4 +19,4 @@ for i = 1:numFrames
     KeypointStack{i} = keypoints;
 end
 
-save([writepath  descrSavePath '_Descriptors'],'DescriptorStack','GridStack','-v7.3')
+save(descrSavePath,'DescriptorStack','KeypointStack','-v7.3')
