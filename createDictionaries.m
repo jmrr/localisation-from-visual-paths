@@ -1,4 +1,4 @@
-function [] = createDictionaries(params, trainingSet)
+function [] = createDictionaries(params, varargin)
 % CREATEDICTIONARIES generates all the combination of passes and calls
 % cluster_descriptors to construct bag of visual words (BOVW) dictionaries.
 %
@@ -11,24 +11,32 @@ function [] = createDictionaries(params, trainingSet)
 % combinations.
 % For the time being, leave only one out.
 %
-% See also private/CLUSTER_DESCRIPTORS, private/CLUSTER_DESCRIPTORS_SPARSE
+% See also private/CLUSTERDESCRIPTORS, private/CLUSTERDESCRIPTORSSPARSE
 
 % Authors: Jose Rivera-Rubio
 %          {jose.rivera}@imperial.ac.uk
-% Date: November, 2014
+% Date: October, 2015
 
+% Parse input, check if trainingSet is specified, otherwise leave one out
+% will be used
+
+if nargin > 1
+    trainingSet = varargin{1};
+end
 
 dictPath = fullfile(params.dictPath,num2str(params.dictionarySize));
 
 for p = params.passes
     
-    training_set = params.passes;
-    if (length(training_set) <= 1)
-        training_set = params.passes;
-    else
-        training_set(p) = [];
-        
+    if ~exist('trainingSet','var')
+        trainingSet = params.passes;
+         if (length(trainingSetZ) <= 1)
+            trainingSet = params.passes;
+        else
+            trainingSet(p) = [];  
+        end
     end
+    
     if strcmpi(params.descriptor,'SIFT')
         clusterDescriptorsSparse(params.descrDir,params.descriptor,params.corridors,params.dictionarySize,trainingSet,dictPath)
     else % dense
