@@ -4,7 +4,9 @@ function run_evaluation_nn_VW(params)
 
 % Authors: Jose Rivera-Rubio and Ioannis Alexiou 
 %          {jose.rivera,ia2109}@imperial.ac.uk
-% Date: November, 2014
+% Initial version: , 2014
+% Last Modified: Otober, 2015
+
 
 % Path strings, modify if NOT using the default suggested paths.
 

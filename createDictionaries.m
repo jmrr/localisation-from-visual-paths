@@ -15,7 +15,9 @@ function [] = createDictionaries(params, varargin)
 
 % Authors: Jose Rivera-Rubio
 %          {jose.rivera}@imperial.ac.uk
-% Date: October, 2015
+%
+% Initial version: April, 2014
+% Last Modified: Otober, 2015
 
 % Parse input, check if trainingSet is specified, otherwise leave one out
 % will be used

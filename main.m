@@ -2,12 +2,11 @@
 
 % Author: Jose Rivera-Rubio
 %          {jose.rivera}@imperial.ac.uk
-% Date: November, 2014
+%
+% Initial version: April, 2014
+% First release: November, 2014
+% Last Modified: Otober, 2015
 
-
-
-%% Run setup
-setup
 
 %% Run parameters
 try
