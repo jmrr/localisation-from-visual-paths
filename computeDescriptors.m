@@ -66,8 +66,10 @@ for corr = params.corridors
             end
             
             disp(['Finished encoding pass ' pass]);
+        else
+            disp('Descriptor already exists');
         end
-        disp('Descriptor already exist');
+            disp('Descriptor created');
     end
     fprintf('Finished computing descriptors %s for corridor %s.\n', params.descriptor, num2str(corr));
     %close(h);
