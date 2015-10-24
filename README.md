@@ -30,6 +30,10 @@ Running Instructions:
 
 Rename `initialize.m.template` to `initialize.m`
 
+```
+cp initialize.m.template initialize.m
+```
+
 Run main.m 
 
 ```
