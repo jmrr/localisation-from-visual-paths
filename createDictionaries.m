@@ -26,7 +26,7 @@ end
 
 dictPath = fullfile(params.dictPath,num2str(params.dictionarySize));
 
-if ~exist('trainingSet','var')
+if ~exist('trainingSet','var') || isempty(trainingSet)
     % Leave one out, so it will create one dictionary per leave one out
     % combination.
     for p = params.passes
