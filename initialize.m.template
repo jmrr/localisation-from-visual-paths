@@ -24,3 +24,4 @@ params = struct(...
  
 addpath('/data/users/jmr10/yael');
 addpath('/data/users/jmr10/vlfeat-0.9.20/toolbox');
+vl_setup
