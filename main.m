@@ -5,30 +5,16 @@
 % Date: November, 2014
 
 
-%% Parameter variables. Change these values HERE
-
-params = struct(...
-    'descriptor',    'ST_GAUSS',...  % SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
-    'corridors',     1:6,... % Corridors to run [1:6] (RSM v6.0)
-    'passes',        1:10,... % Passes to run [1:10] (RSM v6.0)
-    'trainingSet',   [1:3,5], ... 
-    'datasetDir',    '/data/datasets/RSM/visual_paths/v6.0',...   % The root path of the RSM dataset
-    'frameDir',      'frames_resized_w208p',... % Folder name where all the frames have been extracted.
-    'descrDir',  ...
-    '/data/datasets/RSM/descriptors', ...
-    'dictionarySize', 400, ...
-    'dictPath',       '/data/datasets/RSM/dictionaries', ...
-    'encoding', 'HA', ... % 'HA', 'VLAD', 'LLC'
-    'kernel', 'chi2', ... % 'chi2', 'Hellinger'
-    'kernelPath', '/data/datasets/RSM/kernels', ...
-    'metric', 'max', ...
-    'groundTruthPath', './ground_truth', ...
-    'debug', 1 ... % 1 shows waitbars, 0 does not.
-    );
 
 %% Run setup
 setup
 
+%% Run parameters
+try
+initialize
+catch
+    disp('Make sure your initialization script template has been renamed to initialize.m')
+end
 %% Compute the descriptors given the parameters
 tic;
 computeDescriptors(params);
@@ -42,21 +28,17 @@ toc
 %% hovwEncoding (Hard assigment, VLAD, or LLC)
 tic;
 if length(params.corridors) > 1
-   batchEncoding(params);
+    batchEncoding(params);
 else
-   encoding(params);       
+    encoding(params);
 end
 toc
 %% kernels for histograms
 tic;
-if (isempty(params.trainingSet))
-    if (strcmp(params.kernel,'chi2'))
-        run_kernel_HA(params);
-    else
-        run_kernel_Hellinger(params);
-    end
+if (strcmp(params.kernel,'chi2'))
+    runKernelHA(params);
 else
-    run_kernel_HA_custom(params, params.trainingSet)
+    runKernelHellinger(params);
 end
 disp('Kernels encoded')
 toc
