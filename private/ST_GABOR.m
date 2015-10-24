@@ -1,4 +1,4 @@
-function [descProps] = ST_GABOR(seqPath,fname,descrSavePath)
+function [descProps] = ST_GABOR(seqPath, gradientsFname, writepath)
 %   ST_GABOR generates a gradient field by applying one-dimensional
 %   convolution between the video sequence and 3 1-D Gabor functions (5
 %   pixel span in the x,y coordinates, 9 frames span in the temporal dim.).
@@ -19,6 +19,10 @@ function [descProps] = ST_GABOR(seqPath,fname,descrSavePath)
 %          April, 2014
 %
 
+% Check existence:
+gradientsPath = [writepath gradientsFname '.mat'];
+
+% if ~exist(gradientsPath, 'file')
 % List files
 
 files = dir([seqPath '*.jpg']); 
@@ -111,7 +115,11 @@ descProps(1).QuantizedOrientationsXY = numAnglesXY;
 descProps(1).QuantizedElevations = numElevations;
 descProps(1).QuantizedOrientations = numAnglesXY+numElevations;
 
-save(descrSavePath,'channelStack','-v7.3')
+save(gradientsPath,'channelStack','-v7.3')
+
+% end
+
+% disp('Gradients already existe... exiting');
 
 
 function Channels = azimuthAngleQuantizer(Mag,AngleEst,numAnglesXY)

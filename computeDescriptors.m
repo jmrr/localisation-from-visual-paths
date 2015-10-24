@@ -51,18 +51,18 @@ for corr = params.corridors
                     
                     gradientsFname = [descrFname '_gradients'];
                     % Generate the gradients
-                    [descProps] = ST_GABOR(framesDir,gradientsFname,descrSavePath);
+                    [descProps] = ST_GABOR(framesDir, gradientsFname, writepath);
                     
                     % Construct the descriptor
-                    ST_descriptor_construction(gradientsFname, descrSavePath, descProps);
+                    ST_descriptor_construction(gradientsFname, descrSavePath, writepath, descProps);
                 case 'ST_GAUSS' % Case of spatio-temporal Gaussians
                     
                     gradientsFname = [descrFname '_gradients'];
                     % Generate the gradients
-                    [descProps] = ST_GAUSS(framesDir,gradientsFname,descrSavePath);
+                    [descProps] = ST_GAUSS(framesDir, gradientsFname, writepath);
                     
                     % Construct the descriptor
-                    ST_descriptor_construction(gradientsFname, descrSavePath, descProps);
+                    ST_descriptor_construction(gradientsFname, descrSavePath, writepath, descProps);
             end
             
             disp(['Finished encoding pass ' pass]);
