@@ -11,7 +11,7 @@ Current supported format of the sequences: JPG
 
 Authors: 
 
-*          Jose Rivera (jose.rivera@imperial.ac.uk)
+*          [Jose Rivera](http://joserivera.org/) (jose.rivera@imperial.ac.uk)
 *          Ioannis Alexiou (i.alexiou@qmul.ac.uk)
 *          Anil A. Bharath (a.bharath@imperial.ac.uk)
 
@@ -22,8 +22,8 @@ Date: v4.0 10/2015
 Requirements:
 ============
 
-SIFT, DSIFT, VLAD and kernel implementations require VLFEAT (http://www.vlfeat.org/)
-Clustering requires INRIA's Yael K-means (https://gforge.inria.fr/projects/yael/)
+`SIFT`, `DSIFT`, `VLAD` and kernel implementations require [VLFEAT](http://www.vlfeat.org/)
+Clustering requires [INRIA's Yael K-means](https://gforge.inria.fr/projects/yael/)
 
 Running Instructions:
 ====================
@@ -37,8 +37,6 @@ cp initialize.m.template initialize.m
 Run main.m 
 
 ```
-#!matlab
-
 main
 ```
 
@@ -61,8 +59,6 @@ Select your choice from the following parameters in the params structure before 
 
 
 ```
-#!matlab
-
 params = struct(...
     'descriptor',    'ST_GAUSS',...  % SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
     'corridors',     1:6,... % Corridors to run [1:6] (RSM v6.0)
@@ -113,10 +109,7 @@ Descriptor generation
 
 
 ```
-#!matlab
-
 computeDescriptors(params);
-
 ```
 Bag of Words pipeline
 ---------------------
@@ -124,22 +117,18 @@ Bag of Words pipeline
 * create_dictionaries (k-means vector quantization)
    
 ```
-#!matlab
-
-cluster_descriptors
+clusterDescriptors
 
 % OR
 
-cluster_descriptors_sparse (for Keypoint-SIFT)
+clusterDescriptorsSparse (for Keypoint-SIFT)
 ```
 
 
-* hovw_encoding (Hard assigment, VLAD, or LLC)
+* BOVW encoding (Hard assigment, VLAD, or LLC)
     
 ```
-#!matlab
-
-hovw_encoding
+hovwEncoding
 
 %       Remember to modify the parameters of the encoding, which will automatically call
 %       encode_hovw_METHOD/encode_hovw_METHOD_sparse (for Keypoint-SIFT),
@@ -152,27 +141,24 @@ hovw_encoding
 * Kernels for histograms
     
 ```
-#!matlab
-
-run_kernel_HA
+runKernelHA
 
 % OR
 
-run_kernel_Hellinger
+runKernelHellinger
 
 ```
 
 * Run evaluation routine to add the error measurement to the kernels.
 
 ```
-#!matlab
 run_evaluation_nn_VW
 ```
 
 * [Optional: Move kernels to one folder]
 
 ```
-#!bash
+#!/bin/bash
 cd /folder/to/kernels
 mkdir all_chi2
 find . -name *chi2*.mat -exec cp -vf {} all_chi2/ \; # if chi2 kernel
@@ -184,6 +170,6 @@ find . -name *Hellinger*.mat -exec cp -vf {} all_chi2/ \;
 * Generate PDF results and plots with 
 
 ```
-#!matlab
 results_generation.m
 ```
+
