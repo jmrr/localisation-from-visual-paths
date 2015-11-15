@@ -1,13 +1,17 @@
-This is a Matlab code to extract visual descriptors and implement a bag of
-visual words pipeline from video sequences.
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.33762.svg)](https://zenodo.org/record/33762)
+## Appearance-based methods for visual localisation
+
+This is a MATLAB library to extract visual descriptors and implement a bag-of-
+visual-words pipeline from video sequences taken by multiple users in order to provide localisation.
+
 The code is customised and ready to be used with the RSM dataset 
 (http://rsm.bicv.org) but can be used on any sort of image sequences if the
 directory paths are correctly specified.
 
 Current implemented descriptor extraction methods (description below):
-LW_COLOR, SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS
+`LW_COLOR`, `SIFT`, `DSIFT`, `SF_GABOR`, `ST_GABOR`, `ST_GAUSS`
 
-Current supported format of the sequences: JPG
+Current supported format of the sequences: `jpg`
 
 Authors: 
 
@@ -17,7 +21,7 @@ Authors:
 
 Web: [http://www.bicv.org](http://www.bicv.org)
 
-Date: v4.0 10/2015
+Date: v4.1 11/2015
 
 Requirements:
 ============
