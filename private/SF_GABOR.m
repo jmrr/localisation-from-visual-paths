@@ -21,8 +21,15 @@ numFrames = length(files);
 
 % Create pooling subspaces:
 
-LMs = gpuArray(PoolingMappings);
-
+try
+    hasCUDA = 1;
+    LMs = gpuArray(PoolingMappings);
+catch
+    hasCUDA = 0;
+    disp('CUDA not available... trying CPU version')
+    LMs = PoolingMappings;
+end
+    
 % num_pixels = numel(I);
 
 % Preallocate memory for data structures: grid and descriptor stacks.
@@ -34,15 +41,15 @@ DescriptorStack = [];
 
 for n = 1:numFrames
 
-    I = single(rgb2gray(imread([seqPath files(n).name])));
+    I = rgb2gray(imread([seqPath files(n).name]));
 
-    Raw = zeros(size(I,1),size(I,2),4,'single');
-    scale_space = zeros(size(I,1),size(I,2),8,'single');
+    Raw = zeros(size(I,1),size(I,2),4);
+    scale_space = zeros(size(I,1),size(I,2),8);
     
     % Convolve the image with the Gabor
     
     for or = 1:4 
-        Raw(:,:,or) = conv2(I,imag(gabor(2,45*(or-1),4,0,1)),'same'); 
+        Raw(:,:,or) = conv2(double(I),double(imag(gabor(2,45*(or-1),4,0,1))),'same'); 
     end
     
     % To obtain the scale space
@@ -57,13 +64,16 @@ for n = 1:numFrames
     emptyImg = zeros(size(I,1),size(I,2));
     [Grid,Y,X,LinSize] = MakeGrids(emptyImg,step);
 
-    
-    DenseMag = PoolingLayer(emptyImg,gpuArray(scale_space),LMs,LinSize,Y,X);
+    if(hasCUDA)
+        DenseMag = PoolingLayer(emptyImg,gpuArray(scale_space),LMs,LinSize,Y,X, hasCUDA);
+    else
+        DenseMag = PoolingLayer(emptyImg,scale_space,LMs,LinSize,Y,X, hasCUDA);
+    end
 
-    DenseMag = single( DenseMag ./ repmat(sqrt(sum(DenseMag.^2,2))+eps,[1,size(DenseMag,2)]) );
+    DenseMag = DenseMag ./ repmat(sqrt(sum(DenseMag.^2,2))+eps,[1,size(DenseMag,2)]);
 
-    DescriptorStack = cat(3,DescriptorStack,single(DenseMag));
-    GridStack = cat(3,GridStack,single(Grid));
+    DescriptorStack = cat(3,DescriptorStack,DenseMag);
+    GridStack = cat(3,GridStack,Grid);
 
 end
 
@@ -83,12 +93,16 @@ function [GridLin,Y,X,LinSize] = MakeGrids(I,step)
     
 end % end MakeGrids
 
-function DM = PoolingLayer(I,scale_space,LMap,LinSize,Y,X)
+function DM = PoolingLayer(I,scale_space,LMap,LinSize,Y,X, hasCUDA)
 
     NumAttr = 17;
     NumGrads = 8;
-
-    DenseMag = gpuArray.zeros(size(I,1),size(I,2),NumAttr*NumGrads,'single');
+    
+    if(hasCUDA)
+        DenseMag = gpuArray.zeros(size(I,1),size(I,2),NumAttr*NumGrads);
+    else
+        DenseMag = zeros(size(I,1),size(I,2),NumAttr*NumGrads);
+    end
 
     for attr = 1:NumAttr
 
@@ -131,7 +145,7 @@ function LMs = PoolingMappings
 
     % Normalisation
 
-    LinMaps = single(M);
+    LinMaps = M;
 
     LinMaps = LinMaps ./ repmat(sum(sum(LinMaps)),[diameter,diameter,1]);
 

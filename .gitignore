@@ -7,3 +7,5 @@ yael_kmeans/
 *.mat
 *~
 initialize.m
+private/vMini
+vMini
