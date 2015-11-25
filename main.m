@@ -42,8 +42,8 @@ end
 disp('Kernels encoded')
 toc
 %% Run evaluation routine to add the error measurement to the kernels.
-run_evaluation_nn_VW(params);
+% run_evaluation_nn_VW(params);
 
 %% Generate PDF results
 
-results_generation
+% results_generation

@@ -36,8 +36,8 @@ for n = 1:numFrames
 
     I = single(rgb2gray(imread([seqPath files(n).name])));
 
-    Raw = zeros(size(I,1),size(I,2),4,'single');
-    scale_space = zeros(size(I,1),size(I,2),8,'single');
+    Raw = zeros(size(I,1),size(I,2),4,'double');
+    scale_space = zeros(size(I,1),size(I,2),8,'double');
     
     % Convolve the image with the Gabor
     
@@ -88,7 +88,7 @@ function DM = PoolingLayer(I,scale_space,LMap,LinSize,Y,X)
     NumAttr = 17;
     NumGrads = 8;
 
-    DenseMag = gpuArray.zeros(size(I,1),size(I,2),NumAttr*NumGrads,'single');
+    DenseMag = gpuArray.zeros(size(I,1),size(I,2),NumAttr*NumGrads,'double');
 
     for attr = 1:NumAttr
 
@@ -131,7 +131,7 @@ function LMs = PoolingMappings
 
     % Normalisation
 
-    LinMaps = single(M);
+    LinMaps = double(M);
 
     LinMaps = LinMaps ./ repmat(sum(sum(LinMaps)),[diameter,diameter,1]);
 
