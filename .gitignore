@@ -4,7 +4,6 @@ kernels/
 descriptors
 yael_kmeans/
 .fuse_hidden*
-*.mat
 *~
 initialize.m
 private/vMini
