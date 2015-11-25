@@ -1,7 +1,9 @@
-function SF_GABOR(seqPath, descrSavePath)
-%   SF_GABOR  constructs a single-frame descriptor based on 17 DAISY-like
-%   pooling arrangements applied over the result of 2D convolution
-%   between the frames and and antysymmetric, 2D Gabors.
+function L1_CRBM(seqPath, descrSavePath)
+%   CRBM  constructs a single-frame descriptor based on 8-
+%   pooler arrangements applied to the outputs of a single layer
+%   of a CRBM with linear hidden to visible mapping and binary
+%   hidden units. The outputs of this layer are represented as
+%   probabilities to the poolers.
 %
 %   Inputs:
 %       - seqPath: an existing path where the sequence images are stored
@@ -10,8 +12,8 @@ function SF_GABOR(seqPath, descrSavePath)
 %       - writepath: an existing path where the .mat data with the
 %           descriptors will be stored
 %   
-%    Authors: Jose Rivera and Ioannis Alexiou
-%          April, 2014
+%    Authors: Jose Rivera, A.A. Bharath
+%             November, 2015
 %
 % Count number of frames
 
@@ -43,8 +45,8 @@ for n = 1:numFrames
 
     I = rgb2gray(imread([seqPath files(n).name]));
 
-    Raw = zeros(size(I,1),size(I,2),4,'double');
-    scale_space = zeros(size(I,1),size(I,2),8,'double');
+    Raw = zeros(size(I,1),size(I,2),4);
+    scale_space = zeros(size(I,1),size(I,2),8);
     
     % Convolve the image with the Gabor
     
@@ -99,7 +101,7 @@ function DM = PoolingLayer(I,scale_space,LMap,LinSize,Y,X, hasCUDA)
     NumGrads = 8;
     
     if(hasCUDA)
-        DenseMag = gpuArray.zeros(size(I,1),size(I,2),NumAttr*NumGrads,'double');
+        DenseMag = gpuArray.zeros(size(I,1),size(I,2),NumAttr*NumGrads);
     else
         DenseMag = zeros(size(I,1),size(I,2),NumAttr*NumGrads);
     end
@@ -145,7 +147,7 @@ function LMs = PoolingMappings
 
     % Normalisation
 
-    LinMaps = double(M);
+    LinMaps = M;
 
     LinMaps = LinMaps ./ repmat(sum(sum(LinMaps)),[diameter,diameter,1]);
 

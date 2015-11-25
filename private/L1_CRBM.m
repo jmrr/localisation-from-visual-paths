@@ -1,7 +1,9 @@
-function SF_GABOR(seqPath, descrSavePath)
-%   SF_GABOR  constructs a single-frame descriptor based on 17 DAISY-like
-%   pooling arrangements applied over the result of 2D convolution
-%   between the frames and and antysymmetric, 2D Gabors.
+function L1_CRBM(seqPath, descrSavePath)
+%   CRBM  constructs a single-frame descriptor based on 8-
+%   pooler arrangements applied to the outputs of a single layer
+%   of a CRBM with linear hidden to visible mapping and binary
+%   hidden units. The outputs of this layer are represented as
+%   probabilities to the poolers.
 %
 %   Inputs:
 %       - seqPath: an existing path where the sequence images are stored
@@ -9,9 +11,12 @@ function SF_GABOR(seqPath, descrSavePath)
 %           used for the .mat descriptor data.
 %       - writepath: an existing path where the .mat data with the
 %           descriptors will be stored
+%       - note that this also requires that FBOPT lies within the runtime
+%         directory; not sure how this will work out when "batching"
 %   
-%    Authors: Jose Rivera and Ioannis Alexiou
-%          April, 2014
+%    Authors: Jose Rivera, A.A. Bharath
+%             November, 2015
+%             V0.1
 %
 % Count number of frames
 
@@ -38,26 +43,37 @@ GridStack = [];
 DescriptorStack = [];
 
 % Run for all the frames in the video sequence
-
+FB = loadcrbmL1('CRBML1Weights');
+NUnits = FB.NUnits;
+alpha = FB.RecommendedAlpha;
 for n = 1:numFrames
 
     I = rgb2gray(imread([seqPath files(n).name]));
+    
+    % LoG prefiltering
+    X = conv2(double(I),fspecial('gaussian',[7,7],2),'same');
+    
+    % Normalisation for pixel variance !!! DANGEROUS STUFF USED WITHIN
+    % the NN community...NEEDS TO BE REPLACED AT SOME STAGE BY SENSIBLE
+    % NORMALISATION LIMITS
+    X = X./sqrt(mean(mean(X.^2)));
+    
+    Raw = zeros(size(I,1),size(I,2),NUnits);
+    pactivity = zeros(size(I,1),size(I,2),NUnits);
+    
 
-    Raw = zeros(size(I,1),size(I,2),4,'double');
-    scale_space = zeros(size(I,1),size(I,2),8,'double');
-    
-    % Convolve the image with the Gabor
-    
-    for or = 1:4 
-        Raw(:,:,or) = conv2(double(I),double(imag(gabor(2,45*(or-1),4,0,1))),'same'); 
+    % Compute linear convolution
+    for k = 1:NUnits 
+        Raw(:,:,k) = conv2(X,FB.W(:,:,k),'same') + FB.B(k); 
     end
     
-    % To obtain the scale space
-    
-    for L = 1:4
-        scale_space(:,:,L) = max(Raw(:,:,L),0); 
-        scale_space(:,:,L+4) = -min(Raw(:,:,L),0); 
+    % Apply non-linear activations
+    for k = 1:NUnits 
+        pactivity(:,:,k) = exp(alpha*Raw(:,:,k))./(1+conv2(exp(alpha*Raw(:,:,k)),sum(LMs,3),'same'));
     end
+    
+    % Ensure nothing > 1 - required because pooler is not normalised.
+    pactivity = pactivity/(max(pactivity(:)));
     
     % Create the sampling grids
     step = 3;
@@ -65,9 +81,9 @@ for n = 1:numFrames
     [Grid,Y,X,LinSize] = MakeGrids(emptyImg,step);
 
     if(hasCUDA)
-        DenseMag = PoolingLayer(emptyImg,gpuArray(scale_space),LMs,LinSize,Y,X, hasCUDA);
+        DenseMag = PoolingLayer(emptyImg,gpuArray(pactivity),LMs,LinSize,Y,X, hasCUDA);
     else
-        DenseMag = PoolingLayer(emptyImg,scale_space,LMs,LinSize,Y,X, hasCUDA);
+        DenseMag = PoolingLayer(emptyImg,pactivity,LMs,LinSize,Y,X, hasCUDA);
     end
 
     DenseMag = DenseMag ./ repmat(sqrt(sum(DenseMag.^2,2))+eps,[1,size(DenseMag,2)]);
@@ -95,11 +111,11 @@ end % end MakeGrids
 
 function DM = PoolingLayer(I,scale_space,LMap,LinSize,Y,X, hasCUDA)
 
-    NumAttr = 17;
-    NumGrads = 8;
+    NumAttr = 9;
+    NumGrads = 16;
     
     if(hasCUDA)
-        DenseMag = gpuArray.zeros(size(I,1),size(I,2),NumAttr*NumGrads,'double');
+        DenseMag = gpuArray.zeros(size(I,1),size(I,2),NumAttr*NumGrads);
     else
         DenseMag = zeros(size(I,1),size(I,2),NumAttr*NumGrads);
     end
@@ -141,11 +157,11 @@ function LMs = PoolingMappings
 
     Map = attentional_subspaces(extended_diameter,rho,alpha_center,alpha,beta);
 
-    M = imresize(Map(:,:,8:end),[diameter diameter],'bilinear');
+    M = imresize(Map(:,:,8:end-8),[diameter diameter],'bilinear');
 
     % Normalisation
 
-    LinMaps = double(M);
+    LinMaps = M;
 
     LinMaps = LinMaps ./ repmat(sum(sum(LinMaps)),[diameter,diameter,1]);
 

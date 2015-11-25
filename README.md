@@ -1,40 +1,46 @@
-This is a Matlab code to extract visual descriptors and implement a bag of
-visual words pipeline from video sequences.
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.33762.svg)](https://zenodo.org/record/33762)
+## Appearance-based methods for visual localisation
+
+This is a MATLAB library to extract visual descriptors and implement a bag-of-
+visual-words pipeline from video sequences taken by multiple users in order to provide localisation.
+
 The code is customised and ready to be used with the RSM dataset 
 (http://rsm.bicv.org) but can be used on any sort of image sequences if the
 directory paths are correctly specified.
 
 Current implemented descriptor extraction methods (description below):
-LW_COLOR, SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS
+`LW_COLOR`, `SIFT`, `DSIFT`, `SF_GABOR`, `ST_GABOR`, `ST_GAUSS`
 
-Current supported format of the sequences: JPG
+Current supported format of the sequences: `jpg`
 
 Authors: 
 
-*          Jose Rivera (jose.rivera@imperial.ac.uk)
+*          [Jose Rivera](http://joserivera.org/) (jose.rivera@imperial.ac.uk)
 *          Ioannis Alexiou (i.alexiou@qmul.ac.uk)
 *          Anil A. Bharath (a.bharath@imperial.ac.uk)
 
 Web: [http://www.bicv.org](http://www.bicv.org)
 
-Date: v4.0 10/2015
+Date: v4.1 11/2015
 
 Requirements:
 ============
 
-SIFT, DSIFT, VLAD and kernel implementations require VLFEAT (http://www.vlfeat.org/)
-Clustering requires INRIA's Yael K-means (https://gforge.inria.fr/projects/yael/)
+`SIFT`, `DSIFT`, `VLAD` and kernel implementations require [VLFEAT](http://www.vlfeat.org/)
+Clustering requires [INRIA's Yael K-means](https://gforge.inria.fr/projects/yael/)
 
 Running Instructions:
 ====================
 
 Rename `initialize.m.template` to `initialize.m`
 
+```
+cp initialize.m.template initialize.m
+```
+
 Run main.m 
 
 ```
-#!matlab
-
 main
 ```
 
@@ -57,8 +63,6 @@ Select your choice from the following parameters in the params structure before 
 
 
 ```
-#!matlab
-
 params = struct(...
     'descriptor',    'ST_GAUSS',...  % SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
     'corridors',     1:6,... % Corridors to run [1:6] (RSM v6.0)
@@ -109,10 +113,7 @@ Descriptor generation
 
 
 ```
-#!matlab
-
 computeDescriptors(params);
-
 ```
 Bag of Words pipeline
 ---------------------
@@ -120,22 +121,18 @@ Bag of Words pipeline
 * create_dictionaries (k-means vector quantization)
    
 ```
-#!matlab
-
-cluster_descriptors
+clusterDescriptors
 
 % OR
 
-cluster_descriptors_sparse (for Keypoint-SIFT)
+clusterDescriptorsSparse (for Keypoint-SIFT)
 ```
 
 
-* hovw_encoding (Hard assigment, VLAD, or LLC)
+* BOVW encoding (Hard assigment, VLAD, or LLC)
     
 ```
-#!matlab
-
-hovw_encoding
+hovwEncoding
 
 %       Remember to modify the parameters of the encoding, which will automatically call
 %       encode_hovw_METHOD/encode_hovw_METHOD_sparse (for Keypoint-SIFT),
@@ -148,27 +145,24 @@ hovw_encoding
 * Kernels for histograms
     
 ```
-#!matlab
-
-run_kernel_HA
+runKernelHA
 
 % OR
 
-run_kernel_Hellinger
+runKernelHellinger
 
 ```
 
 * Run evaluation routine to add the error measurement to the kernels.
 
 ```
-#!matlab
 run_evaluation_nn_VW
 ```
 
 * [Optional: Move kernels to one folder]
 
 ```
-#!bash
+#!/bin/bash
 cd /folder/to/kernels
 mkdir all_chi2
 find . -name *chi2*.mat -exec cp -vf {} all_chi2/ \; # if chi2 kernel
@@ -180,6 +174,6 @@ find . -name *Hellinger*.mat -exec cp -vf {} all_chi2/ \;
 * Generate PDF results and plots with 
 
 ```
-#!matlab
 results_generation.m
 ```
+
