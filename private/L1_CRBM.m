@@ -51,12 +51,13 @@ for n = 1:numFrames
     I = rgb2gray(imread([seqPath files(n).name]));
     
     % LoG prefiltering
-    X = conv2(double(I),fspecial('gaussian',[7,7],2),'same');
+    %X = conv2(double(I),fspecial('gaussian',[7,7],2),'same');
     
     % Normalisation for pixel variance !!! DANGEROUS STUFF USED WITHIN
     % the NN community...NEEDS TO BE REPLACED AT SOME STAGE BY SENSIBLE
     % NORMALISATION LIMITS
-    X = X./sqrt(mean(mean(X.^2)));
+    %X = X./sqrt(mean(mean(X.^2)));
+    X = double(I)/double(max(I(:)));
     
     Raw = zeros(size(I,1),size(I,2),NUnits);
     pactivity = zeros(size(I,1),size(I,2),NUnits);
@@ -67,13 +68,19 @@ for n = 1:numFrames
         Raw(:,:,k) = conv2(X,FB.W(:,:,k),'same') + FB.B(k); 
     end
     
+    % For debugging, convert to e(actity)
+    % TO DO: Figure out why that extra 0.1 factor is required....
+    % Hypothesis: there is something still not quite right in the 
+    % scaling of the distributions during learning
+    eRaw = exp(0.1*alpha*Raw);
+    
     % Apply non-linear activations
     for k = 1:NUnits 
-        pactivity(:,:,k) = exp(alpha*Raw(:,:,k))./(1+conv2(exp(alpha*Raw(:,:,k)),sum(LMs,3),'same'));
+        pactivity(:,:,k) = eRaw(:,:,k)./(1+conv2(eRaw(:,:,k),sum(LMs,3),'same'));
     end
     
     % Ensure nothing > 1 - required because pooler is not normalised.
-    pactivity = pactivity/(max(pactivity(:)));
+  %  pactivity = pactivity/(max(pactivity(:)));
     
     % Create the sampling grids
     step = 3;
