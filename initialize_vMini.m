@@ -3,7 +3,7 @@
 
 params = struct(...
     'descriptor',    'CRBML1',...  % SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
-    'corridors',     1:3,... % Corridors to run [1:6] (RSM v6.0)
+    'corridors',     2,... % Corridors to run [1:6] (RSM v6.0)
     'passes',        1:3,... % Passes to run [1:10] (RSM v6.0) [0:6] for C0 of v7.0 *Synthetic
     'trainingSet',   [1:2], ... 
     'datasetDir',    '/data/datasets/RSMmini/visual_paths/vMini',...   % The root path of the RSM dataset
