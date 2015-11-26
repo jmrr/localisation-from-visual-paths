@@ -41,6 +41,22 @@ else
 end
 disp('Kernels encoded')
 toc
+
+%% debugging by analysing kernel structure
+if (params.debug)
+    load('/data/datasets/RSMmini/kernels/HA/CRBML1/C2/C2_kernel_HA_chi2_P12_1.mat')
+    figure
+    imagesc(Kernel{1})
+    title('training passes 1 and 2, query with P1 retrieving with P1')
+    %%
+    load('/data/datasets/RSMmini/kernels/HA/CRBML1/C2/C2_kernel_HA_chi2_P12_3.mat')
+    figure
+    imagesc(Kernel{1})   
+    title('training passes 1 and 2, query with P3 retrieving with P1')
+    figure
+    imagesc(Kernel{2})
+    title('training passes 1 and 2, query with P3 retrieving with P2')
+end
 %% Run evaluation routine to add the error measurement to the kernels.
 % run_evaluation_nn_VW(params);
 
