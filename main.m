@@ -44,18 +44,27 @@ toc
 
 %% debugging by analysing kernel structure
 if (params.debug)
-    load('/data/datasets/RSMmini/kernels/HA/CRBML1/C2/C2_kernel_HA_chi2_P12_1.mat')
+    kernelFname = sprintf('%s/%s/%s/C2/C2_kernel_HA_chi2_P%s_%d.mat',...
+        params.kernelPath,params.encoding,params.descriptor,sprintf('%d',params.trainingSet)',...
+        params.trainingSet(1));    
+    load(kernelFname);
     figure
     imagesc(Kernel{1})
-    title('training passes 1 and 2, query with P1 retrieving with P1')
-    %%
-    load('/data/datasets/RSMmini/kernels/HA/CRBML1/C2/C2_kernel_HA_chi2_P12_3.mat')
+    title(sprintf('training passes %s, query with P%d retrieving with P%d',...
+        sprintf('%d',params.trainingSet),params.trainingSet(1),params.trainingSet(1)))
+        %%
+    qPass = params.passes; qPass(params.trainingSet) = []
+    kernelFname = sprintf('%s/%s/%s/C2/C2_kernel_HA_chi2_P%s_%d.mat',...
+        params.kernelPath,params.encoding,params.descriptor,sprintf('%d',params.trainingSet),qPass');
+    load(kernelFname);
     figure
     imagesc(Kernel{1})   
-    title('training passes 1 and 2, query with P3 retrieving with P1')
+    title(sprintf('training passes %s, query with P%d retrieving with P%d',...
+        sprintf('%d',params.trainingSet),qPass,params.trainingSet(1)))
     figure
     imagesc(Kernel{2})
-    title('training passes 1 and 2, query with P3 retrieving with P2')
+    title(sprintf('training passes %s, query with P%d retrieving with P%d',...
+        sprintf('%d',params.trainingSet),qPass,params.trainingSet(2)))
 end
 %% Run evaluation routine to add the error measurement to the kernels.
 % run_evaluation_nn_VW(params);

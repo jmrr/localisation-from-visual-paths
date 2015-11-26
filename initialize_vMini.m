@@ -2,7 +2,7 @@
 %%work otherwise main.m will throw an error.
 
 params = struct(...
-    'descriptor',    'CRBML1',...  % SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,
+    'descriptor',    'SF_GABOR',...  % SIFT, DSIFT, SF_GABOR, ST_GABOR, ST_GAUSS,CRBML1
     'corridors',     2,... % Corridors to run [1:6] (RSM v6.0)
     'passes',        1:3,... % Passes to run [1:10] (RSM v6.0) [0:6] for C0 of v7.0 *Synthetic
     'trainingSet',   [1:2], ... 
