@@ -39,7 +39,7 @@ for corr = params.corridors
                     
                 case 'CRBML1' % Case of CRBML1
                     
-                    CRBML1(framesDir, descrSavePath);
+                    L1_CRBM(framesDir, descrSavePath);
                 
                 case 'SF_GABOR' % Case of single-frame Gabor
                     

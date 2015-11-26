@@ -10,7 +10,7 @@
 
 %% Run parameters
 try
-initialize
+initialize_vMini
 catch
     disp('Make sure your initialization script template has been renamed to initialize.m')
 end
