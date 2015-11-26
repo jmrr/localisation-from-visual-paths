@@ -37,9 +37,13 @@ for corr = params.corridors
                     
                     LW_COLOR(framesDir, descrSavePath);
                     
+                case 'CRBML1' % Case of CRBML1
+                    
+                    CRBML1(framesDir, descrSavePath);
+                
                 case 'SF_GABOR' % Case of single-frame Gabor
                     
-                    SF_GABOR(framesDir, descrSavePath);
+                    SF_GABOR(framesDir, descrSavePath);   
                     
                 case 'SIFT' % case of Sparse-SIFT based on keypoint detection
                     
