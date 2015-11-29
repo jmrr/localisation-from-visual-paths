@@ -10,7 +10,8 @@
 
 %% Run parameters
 try
-initialize_vMini
+initialize
+%initialize_vMini
 catch
     disp('Make sure your initialization script template has been renamed to initialize.m')
 end
@@ -55,20 +56,20 @@ if (params.debug)
         %%
     qPass = params.passes; qPass(params.trainingSet) = []
     kernelFname = sprintf('%s/%s/%s/C2/C2_kernel_HA_chi2_P%s_%d.mat',...
-        params.kernelPath,params.encoding,params.descriptor,sprintf('%d',params.trainingSet),qPass');
+        params.kernelPath,params.encoding,params.descriptor,sprintf('%d',params.trainingSet),...
+        qPass(1)');
     load(kernelFname);
     figure
     imagesc(Kernel{1})   
     title(sprintf('training passes %s, query with P%d retrieving with P%d',...
-        sprintf('%d',params.trainingSet),qPass,params.trainingSet(1)))
+        sprintf('%d',params.trainingSet),qPass(1),params.trainingSet(1)))
     figure
     imagesc(Kernel{2})
     title(sprintf('training passes %s, query with P%d retrieving with P%d',...
-        sprintf('%d',params.trainingSet),qPass,params.trainingSet(2)))
+        sprintf('%d',params.trainingSet),qPass(1),params.trainingSet(2)))
 end
 %% Run evaluation routine to add the error measurement to the kernels.
-% run_evaluation_nn_VW(params);
+%run_evaluation_nn_VW(params);
 
 %% Generate PDF results
-
-% results_generation
+%results_generation

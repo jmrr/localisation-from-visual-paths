@@ -23,13 +23,6 @@ function [] = evaluation_nn_VW(params, kernel_results_path)
 
 % Constants and paths
 
-if (ispc)
-    PATHSEP = '\';
-else
-    PATHSEP = '/';
-end
-addpath(params.groundTruthPath);
-
 gt_file_str = 'ground_truth_C%d_P%d.csv';
 
 % Load the results file
@@ -49,7 +42,7 @@ for idx_files = 1:num_results_files
     
     % Result file path and filename for parsing
     
-    results_file = [kernel_results_path PATHSEP D(idx_files).name];
+    results_file = fullfile(kernel_results_path,D(idx_files).name);
     load(results_file);
     
     %% Cleaning from previous version:
@@ -68,7 +61,11 @@ for idx_files = 1:num_results_files
     for pass = params.passes
         
         gt_file = sprintf(gt_file_str,corridor,pass);
-        gt{pass} = csvread(gt_file,1,1);
+        if params.passes(1) == 0
+            gt{pass+1} = csvread(fullfile(params.groundTruthPath,gt_file),1,1);
+        else
+            gt{pass} = csvread(fullfile(params.groundTruthPath,gt_file),1,1);
+        end
         
     end
     
