@@ -43,20 +43,20 @@ for n = 1:numFrames
 
     I = rgb2gray(imread([seqPath files(n).name]));
 
-    Raw = zeros(size(I,1),size(I,2),4,'double');
-    scale_space = zeros(size(I,1),size(I,2),8,'double');
+    G = zeros(size(I,1),size(I,2),4,'double');
+    ScaleSpace = zeros(size(I,1),size(I,2),8,'double');
     
-    % Convolve the image with the Gabor
+    % Convolve the image with the Gabor (g), to yield G
     
     for or = 1:4 
-        Raw(:,:,or) = conv2(double(I),double(imag(gabor(2,45*(or-1),4,0,1))),'same'); 
+        G(:,:,or) = conv2(double(I),double(imag(gabor(2,45*(or-1),4,0,1))),'same'); 
     end
     
     % To obtain the scale space
     
     for L = 1:4
-        scale_space(:,:,L) = max(Raw(:,:,L),0); 
-        scale_space(:,:,L+4) = -min(Raw(:,:,L),0); 
+        ScaleSpace(:,:,L) = max(G(:,:,L),0); 
+        ScaleSpace(:,:,L+4) = -min(G(:,:,L),0); 
     end
     
     % Create the sampling grids
@@ -65,9 +65,9 @@ for n = 1:numFrames
     [Grid,Y,X,LinSize] = MakeGrids(emptyImg,step);
 
     if(hasCUDA)
-        DenseMag = PoolingLayer(emptyImg,gpuArray(scale_space),LMs,LinSize,Y,X, hasCUDA);
+        DenseMag = PoolingLayer(emptyImg,gpuArray(ScaleSpace),LobeMaps,LinSize,Y,X, hasCUDA);
     else
-        DenseMag = PoolingLayer(emptyImg,scale_space,LMs,LinSize,Y,X, hasCUDA);
+        DenseMag = PoolingLayer(emptyImg,ScaleSpace,LobeMaps,LinSize,Y,X, hasCUDA);
     end
 
     DenseMag = DenseMag ./ repmat(sqrt(sum(DenseMag.^2,2))+eps,[1,size(DenseMag,2)]);
@@ -93,7 +93,7 @@ function [GridLin,Y,X,LinSize] = MakeGrids(I,step)
     
 end % end MakeGrids
 
-function DM = PoolingLayer(I,scale_space,LMap,LinSize,Y,X, hasCUDA)
+function DM = PoolingLayer(I,ScaleSpace,LobeMap,LinSize,Y,X, hasCUDA)
 
     NumAttr = 17;
     NumGrads = 8;
@@ -111,19 +111,18 @@ function DM = PoolingLayer(I,scale_space,LMap,LinSize,Y,X, hasCUDA)
         % to 2D convolution over the whole image in one operation.
 
         DenseMag(:,:,(attr-1)*NumGrads+(1:NumGrads)) = ... 
-        imfilter(scale_space,LMap(:,:,attr),'symmetric','conv') ;
+        imfilter(ScaleSpace,LobeMap(:,:,attr),'symmetric','conv') ;
 
     end
 
     % Sub-sample according to the dense grid.
-    DM = gather(DenseMag);
-
     % Reshape to fit the structure Npoints_grid x Dimension_descriptor
+    DM = gather(DenseMag);
     DM = reshape(DM(Y,X,:),LinSize,NumAttr*NumGrads);
     
 end % end Pooling Layer
 
-function LMs = PoolingMappings
+function LobeMaps = PoolingMappings
 
     diameter = 11;
     % M=SiftMaps(Diameter);
@@ -149,7 +148,7 @@ function LMs = PoolingMappings
 
     LinMaps = LinMaps ./ repmat(sum(sum(LinMaps)),[diameter,diameter,1]);
 
-    LMs = LinMaps;
+    LobeMaps = LinMaps;
     
 end % end PoolingMappings
 
