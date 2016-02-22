@@ -23,11 +23,11 @@ numFrames = length(files);
 
 try
     hasCUDA = 1;
-    LMs = gpuArray(PoolingMappings);
+    LMs = gpuArray(poolingMappings);
 catch
     hasCUDA = 0;
     disp('CUDA not available... trying CPU version')
-    LMs = PoolingMappings;
+    LMs = poolingMappings;
 end
     
 % num_pixels = numel(I);
@@ -44,7 +44,7 @@ for n = 1:numFrames
     I = rgb2gray(imread([seqPath files(n).name]));
 
     G = zeros(size(I,1),size(I,2),4,'double');
-    ScaleSpace = zeros(size(I,1),size(I,2),8,'double');
+    orientationSpace = zeros(size(I,1),size(I,2),8,'double');
     
     % Convolve the image with the Gabor (g), to yield G
     
@@ -52,11 +52,11 @@ for n = 1:numFrames
         G(:,:,or) = conv2(double(I),double(imag(gabor(2,45*(or-1),4,0,1))),'same'); 
     end
     
-    % To obtain the scale space
+    % To obtain the orientation space (8 discrete orientations)
     
     for L = 1:4
-        ScaleSpace(:,:,L) = max(G(:,:,L),0); 
-        ScaleSpace(:,:,L+4) = -min(G(:,:,L),0); 
+        orientationSpace(:,:,L) = max(G(:,:,L),0); 
+        orientationSpace(:,:,L+4) = -min(G(:,:,L),0); 
     end
     
     % Create the sampling grids
@@ -65,9 +65,9 @@ for n = 1:numFrames
     [Grid,Y,X,LinSize] = MakeGrids(emptyImg,step);
 
     if(hasCUDA)
-        DenseMag = PoolingLayer(emptyImg,gpuArray(ScaleSpace),LobeMaps,LinSize,Y,X, hasCUDA);
+        DenseMag = PoolingLayer(emptyImg,gpuArray(orientationSpace),LobeMaps,LinSize,Y,X, hasCUDA);
     else
-        DenseMag = PoolingLayer(emptyImg,ScaleSpace,LobeMaps,LinSize,Y,X, hasCUDA);
+        DenseMag = PoolingLayer(emptyImg,orientationSpace,LobeMaps,LinSize,Y,X, hasCUDA);
     end
 
     DenseMag = DenseMag ./ repmat(sqrt(sum(DenseMag.^2,2))+eps,[1,size(DenseMag,2)]);
@@ -93,7 +93,7 @@ function [GridLin,Y,X,LinSize] = MakeGrids(I,step)
     
 end % end MakeGrids
 
-function DM = PoolingLayer(I,ScaleSpace,LobeMap,LinSize,Y,X, hasCUDA)
+function DM = PoolingLayer(I,orientationSpace,LobeMap,LinSize,Y,X, hasCUDA)
 
     NumAttr = 17;
     NumGrads = 8;
@@ -111,7 +111,7 @@ function DM = PoolingLayer(I,ScaleSpace,LobeMap,LinSize,Y,X, hasCUDA)
         % to 2D convolution over the whole image in one operation.
 
         DenseMag(:,:,(attr-1)*NumGrads+(1:NumGrads)) = ... 
-        imfilter(ScaleSpace,LobeMap(:,:,attr),'symmetric','conv') ;
+        imfilter(orientationSpace,LobeMap(:,:,attr),'symmetric','conv') ;
 
     end
 
@@ -122,35 +122,6 @@ function DM = PoolingLayer(I,ScaleSpace,LobeMap,LinSize,Y,X, hasCUDA)
     
 end % end Pooling Layer
 
-function LobeMaps = PoolingMappings
-
-    diameter = 11;
-    % M=SiftMaps(Diameter);
-    % PS = Diameter*Diameter;
-
-    % Parameters
-    alpha_center = 20; %1/alpha_center = 0.05, 0.02 0.03 *mlt
-    % rho=[0 0.3 0.4]; VOC % 0.35 0.85 initially 0 0.3 0.7 r1 r2
-    rho = [0 0.45 0.6]; % Caltech
-    alpha = 4;  %1/alpha = 5.8 2.8 0.3 %0.25 *mlt
-    beta = 0.4;  %1/beta = 2.5 1.1 1.2 0.18*mlt
-
-    extended_diameter = diameter*20;    % 20 times the diameter is enough area to
-                                       % build the subspaces
-
-    Map = attentional_subspaces(extended_diameter,rho,alpha_center,alpha,beta);
-
-    M = imresize(Map(:,:,8:end),[diameter diameter],'bilinear');
-
-    % Normalisation
-
-    LinMaps = double(M);
-
-    LinMaps = LinMaps ./ repmat(sum(sum(LinMaps)),[diameter,diameter,1]);
-
-    LobeMaps = LinMaps;
-    
-end % end PoolingMappings
 
 function [Grid,BorderOffsets] = RegularGrid(Input,step,BorderOffsets)
 
