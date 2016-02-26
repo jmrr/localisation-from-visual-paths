@@ -31,7 +31,9 @@ numChannels = size(channelStack,4);
 temporalGaussianFilter = fspecial('gaussian',[11 1],2);
 
 for i = 1:numChannels
-
+    % As imfilter work along the first nonsingleton dimension, need to push
+    % the temporal dimension twice to the left, compute the temporal
+    % filtering and push back once to the left towards its original position.
     shiftedChannelStack = shiftdim(channelStack(:,:,:,i),2);
     filteredChannelStack = shiftdim(imfilter(shiftedChannelStack,temporalGaussianFilter','conv'),1);
     channelStack(:,:,:,i) = filteredChannelStack;
