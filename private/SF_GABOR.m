@@ -23,11 +23,11 @@ numFrames = length(files);
 
 try
     hasCUDA = 1;
-    LMs = gpuArray(poolingMappings);
+    LobeMaps = gpuArray(poolingMappings);
 catch
     hasCUDA = 0;
     disp('CUDA not available... trying CPU version')
-    LMs = poolingMappings;
+    LobeMaps = poolingMappings;
 end
     
 % num_pixels = numel(I);

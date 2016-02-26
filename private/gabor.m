@@ -8,9 +8,9 @@ function gb = gabor(sigma,orient,lambda,phase,aspect)
 %          direction of the carrier since x_theta and y_theta are rotated
 %          by theta.
 % lambda = the wavelength of the carrier (pixels).
-% phase  = the phase ofset of the carrier(degrees)
+% phase  = the phase offset of the carrier(degrees)
 % aspect = aspect ratio of Gaussian envelope (0 = no modulation over "width" of
-%          sin wave, 1 = circular symmetric envelope). aspect can also be
+%          sin wave, 1 = circular symmetric envelope). Aspect can also be
 %          seen as the amount the kernel is "stretched" either along or
 %          across the kernel wave pattern, or ellipticity of the support.
 %

@@ -129,13 +129,14 @@ function Channels = azimuthAngleQuantizer(Mag,AngleEst,numAnglesXY)
  angles=0:angstep:2*pi-angstep;
 
     for a=1:length(angles)
-    %     compute each orientation channel
+        % Histogram of orientations: compute binning for each orientation
+        % channel, i.e. difference between orientation of each pixel and
+        % the bin one, take only if it belongs to that bin.
         tmp = cos(AngleEst - angles(a)).^9;
         tmp = tmp .* (tmp > 0);
 
-    %     weight by magnitude
-       Channels(:,:,a) = tmp .* Mag;
-
+        % weight by magnitude
+        Channels(:,:,a) = tmp .* Mag;
     end
 
 function Channels = elevationAngleQuantizer(Mag,AngleEst)
@@ -143,11 +144,11 @@ function Channels = elevationAngleQuantizer(Mag,AngleEst)
 angles = 0:pi/4:pi;
 
 for a=1:length(angles)
-%     compute each orientation channel
+    % compute each orientation channel
     tmp = cos(AngleEst - angles(a)).^9;
     tmp = tmp .* (tmp > 0);
 
-%     weight by magnitude
+    % weight by magnitude
    Channels(:,:,a) = tmp .* Mag;
 
 end
