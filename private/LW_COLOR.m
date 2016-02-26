@@ -12,7 +12,7 @@ function LW_COLOR(seqPath, descrSavePath)
 %   Description: Derivative filters are computed along the x,y and t
 %   dimensions on each of the 3 RGB channels. Temporal smoothing with a
 %   support of 11 neighbouring frames is applied. Finally, the components
-%   of the 3x3 matrix at each of the pixels locations is averaged (pooled) 
+%   of the 3x3 matrix at each of the pixels locations are averaged (pooled) 
 %   over 16 spatial regions. The descriptor is thus 144-dimensional
 %   (3x3x16).
 %   
@@ -122,11 +122,18 @@ DescriptorStack = reshape(DescriptorBlocks,[1 size(DescriptorBlocks)]);
 
 save(descrSavePath,'DescriptorStack','-v7.3')
 
+end % function LW_COLOR
+
 function D = processblock(x,K)
 
 y = double(x);
 clear x;
-[fx,fy,fc,ft] = gradient(y); %fc across colors is not used
+% fc across colors is not used
+% ft uses gradient() default, 1 element spacing in any single direction,
+% meaning that it would compute the gradient using the previous frame.
+% For each dimension, the gradient is computed across that dimension for 
+% all the dimensions of the array
+[fx,fy,fc,ft] = gradient(y); 
 clear y;
 
 [M,N,c,NF] = size(fx);
@@ -140,7 +147,9 @@ for i = 1:NF
     PartialYFrame = fy(:,:,:,i);
     PartialtFrame = ft(:,:,:,i);
     % Sampling the gradients with the pooler lobes through a weighted
-    % average achieved with the matrix product.
+    % average achieved with the matrix product. The reshaping of
+    % the partial frames effectively separates the computation per RGB
+    % channel.
     ip1 = Kd'*reshape(PartialXFrame,[M*N,3]);
     ip2 = Kd'*reshape(PartialYFrame,[M*N,3]);
     ip3 = Kd'*reshape(PartialtFrame,[M*N,3]);
@@ -150,4 +159,3 @@ status = 0;
 
 end % end function processblock
 
-end % function LW_COLOR
