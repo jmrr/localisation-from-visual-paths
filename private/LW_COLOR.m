@@ -23,7 +23,6 @@ function LW_COLOR(seqPath, descrSavePath)
 % Date: April, 2013
 
 
-
 % Generate Signals from frame folder. 
 
 % frame information
@@ -34,11 +33,8 @@ img = imread([seqPath filesep D(1).name]);
 N = size(img,2); % Width
 M = size(img,1); % Height
 NK = 8; % Number of kernels
-
 % blocks
 blocksize = 100;
-NBlocks = ceil(numFrames/blocksize);
-% lastBlocksize = numFrames-(NBlocks-1)*blocksize;
 
 % Make the sampling tensor, but don't expand it across time or colour
 % channels
@@ -46,6 +42,7 @@ NBlocks = ceil(numFrames/blocksize);
 x = x - mean(x(1,:)); % creates centred x and y coordinate system
 y = y - mean(y(:,1));
 
+% Polar coordinates of grid
 r = sqrt(x.^2 + y.^2);
 
 theta = atan2(y,x);
@@ -69,7 +66,8 @@ Wr2 = rho.^(3.5).*exp(-15*rho);
 AllUnitVecs = [yn(:),xn(:)];
 
 for k = 1:NK
-    dp1 = AllUnitVecs*u(k,:)'; dp1 = dp1.*(dp1>0);
+    dp1 = AllUnitVecs*u(k,:)'; 
+    dp1 = dp1.*(dp1>0);
     dp1 = reshape(dp1',[M,N]);
     K(:,:,k) = dp1.*Wr1;
     K(:,:,k+NK) = dp1.*Wr2;
@@ -80,28 +78,44 @@ end
 
 disp(['Number of Frames: ',num2str(numFrames)]);
 
-for block = 1:NBlocks-1
-    x = [];
-    for idx = (block-1)*blocksize+1:block*blocksize
-        x = cat(4,x,imread([seqPath '/' D(idx).name]));
+%% BLOCK PROCESSING
+
+NBlocks = ceil(numFrames/blocksize);
+% lastBlocksize = numFrames-(NBlocks-1)*blocksize;
+x = [];
+
+if NBlocks > 1
+    for block = 1:NBlocks-1
+        for idx = (block-1)*blocksize+1:block*blocksize
+            x = cat(4,x,imread(fullfile(seqPath,D(idx).name)));
+        end
+        disp(['Read Block #: ',num2str(block)]);
+        DescriptorBlocks(:,:,block) = processblock(x,K);
     end
-    disp(['Read Block #: ',num2str(block)]);
-    DescriptorBlocks(:,:,block) = processblock(x,K);
+else
+    for idx = 1:numFrames
+       x = cat(4, x, imread(fullfile(seqPath,D(idx).name)));
+    end
+   DescriptorBlocks(:,:,1) = processblock(x,K); 
 end
+
 % Reshape
 [M,N,O] = size(DescriptorBlocks);
 DescriptorBlocks = reshape(DescriptorBlocks,[M,N*O]);
 
-% Process last block
-x = []; 
-for idx = (NBlocks-1)*blocksize+1:numFrames
-    x = cat(4,x,imread([seqPath '/' D(idx).name]));  
+if NBlocks > 1
+    % Process last block
+    x = []; 
+    for idx = (NBlocks-1)*blocksize+1:numFrames
+        x = cat(4,x,imread([seqPath '/' D(idx).name]));  
+    end
+    disp(['Read Block #: ',num2str(NBlocks)]);
+    DescriptorBlocks = cat(2,DescriptorBlocks,processblock(x,K));
+
 end
-disp(['Read Block #: ',num2str(NBlocks)]);
-DescriptorBlocks = cat(2,DescriptorBlocks,processblock(x,K));
+
 
 % Construct stack that follows the structure Ndesc x dimDesc x numFrames
-
 DescriptorStack = reshape(DescriptorBlocks,[1 size(DescriptorBlocks)]);
 
 % and save results
@@ -112,18 +126,21 @@ function D = processblock(x,K)
 
 y = double(x);
 clear x;
-[fx,fy,fc,ft] = gradient(y);
+[fx,fy,fc,ft] = gradient(y); %fc across colors is not used
 clear y;
 
 [M,N,c,NF] = size(fx);
 NK = size(K,3);
 
+% Unravelling the 16 kernel matrices (one per lobe) into 16 vectors
 Kd = reshape(K,[M*N,NK]);
 
 for i = 1:NF
     PartialXFrame = fx(:,:,:,i);
     PartialYFrame = fy(:,:,:,i);
     PartialtFrame = ft(:,:,:,i);
+    % Sampling the gradients with the pooler lobes through a weighted
+    % average achieved with the matrix product.
     ip1 = Kd'*reshape(PartialXFrame,[M*N,3]);
     ip2 = Kd'*reshape(PartialYFrame,[M*N,3]);
     ip3 = Kd'*reshape(PartialtFrame,[M*N,3]);
